@@ -18,8 +18,10 @@
                         primary: '#6b46c1', // Фиолетовый оттенок, вдохновленный Floki
                         secondary: '#a78bfa', // Более светлый фиолетовый
                         accent: '#f97316', // Оранжевый акцент
-                        darkbg: '#1a202c', // Темный фон
+                        darkbg: '#1a202c', // Темный фон (используется для общих секций)
                         lighttext: '#f8fafc', // Светлый текст
+                        overlay: 'rgba(0, 0, 0, 0.7)', // Цвет для оверлея
+                        headerbg: '#000000', // Чистый черный для новой шапки
                     }
                 }
             }
@@ -30,6 +32,8 @@
             font-family: 'Inter', sans-serif;
             background-color: #0d0f1b; /* Очень темный фон */
             color: #f8fafc; /* Светлый текст по умолчанию */
+            overflow-x: hidden; /* Предотвращаем горизонтальный скролл при открытии меню */
+            padding-top: 80px; /* Отступ сверху для контента, чтобы он не перекрывался фиксированной шапкой */
         }
         /* Стили для скроллбара, чтобы он соответствовал дизайну */
         ::-webkit-scrollbar {
@@ -45,18 +49,56 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #a78bfa; /* Цвет ползунка при наведении */
         }
+        /* Классы для анимации мобильного меню */
+        .mobile-menu {
+            transition: transform 0.3s ease-out;
+        }
+        .overlay {
+            transition: opacity 0.3s ease-out;
+        }
+        .hidden-menu {
+            transform: translateX(100%);
+        }
+        .show-menu {
+            transform: translateX(0);
+        }
+        .hidden-overlay {
+            opacity: 0;
+            pointer-events: none; /* Чтобы оверлей не блокировал взаимодействие, когда он не виден */
+        }
+        .show-overlay {
+            opacity: 1;
+        }
+        /* Стили для сообщения об ошибке/загрузке */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none; /* Скрыто по умолчанию */
+            text-align: center;
+        }
+        .message-box.show {
+            display: block;
+        }
     </style>
 </head>
 <body class="font-inter">
     <!-- Шапка сайта -->
-    <header class="bg-darkbg p-4 shadow-lg sticky top-0 z-50">
-        <nav class="container mx-auto flex justify-between items-center">
-            <!-- Логотип -->
-            <a href="#" class="text-3xl font-bold text-lighttext flex items-center rounded-lg p-2 transition duration-300 ease-in-out hover:bg-gray-700">
-                <span class="text-primary text-5xl mr-2">💎</span> ВашМемТокен
+    <header class="fixed top-0 w-full z-50 py-3">
+        <div class="container mx-auto bg-headerbg rounded-full shadow-lg px-6 py-2 md:py-1.5 flex justify-between items-center max-w-7xl h-16 md:h-14">
+            <!-- Логотип (только фото токена) -->
+            <a href="#" class="text-3xl font-bold text-lighttext flex items-center rounded-lg p-1.5 transition duration-300 ease-in-out hover:bg-gray-700">
+                <span class="text-primary text-5xl md:text-4xl">💎</span>
             </a>
-            <!-- Навигационные ссылки -->
-            <div class="flex space-x-6">
+            <!-- Навигационные ссылки для десктопа -->
+            <div class="hidden md:flex space-x-6 items-center">
                 <a href="#home" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium">Главная</a>
                 <a href="#comics" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium">Комиксы</a>
                 <a href="#buy" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium">Купить Токен</a>
@@ -65,15 +107,43 @@
                     Подключить Кошелек
                 </button>
             </div>
-        </nav>
+
+            <!-- Гамбургер-иконка для мобильных устройств -->
+            <div class="md:hidden">
+                <button id="mobileMenuBtn" class="text-lighttext focus:outline-none p-2 rounded-md hover:bg-gray-700">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
     </header>
+
+    <!-- Оверлей для мобильного меню -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 bg-overlay z-40 hidden-overlay"></div>
+
+    <!-- Мобильное меню (шторка) -->
+    <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-gray-900 z-50 shadow-lg p-6 hidden-menu flex flex-col justify-start items-start space-y-6">
+        <button id="closeMenuBtn" class="absolute top-4 right-4 text-lighttext hover:text-primary focus:outline-none p-2 rounded-md hover:bg-gray-700">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <a href="#home" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()">Главная</a>
+        <a href="#comics" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()">Комиксы</a>
+        <a href="#buy" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()">Купить Токен</a>
+        <a href="#about" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()">О Нас</a>
+        <button id="connectWalletBtnMobile" class="bg-primary hover:bg-secondary text-lighttext font-bold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 w-full text-left">
+            Подключить Кошелек
+        </button>
+    </div>
 
     <main>
         <!-- Секция Героя -->
         <section id="home" class="relative h-screen flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/0d0f1b/2e3a51?text=ФОН+ДЛЯ+ВАШЕГО+МЕМ-ТОКЕНА');">
             <div class="absolute inset-0 bg-black opacity-60"></div>
             <div class="relative z-10 p-8 rounded-lg shadow-2xl max-w-4xl mx-auto backdrop-blur-sm bg-darkbg bg-opacity-70">
-                <h1 class="text-6xl md:text-8xl font-extrabold text-lighttext leading-tight mb-6 animate-pulse">
+                <h1 class="text-6xl md:text-8xl font-extrabold text-lighttext leading-tight mb-6">
                     Ваш <span class="text-primary">Мем-Токен</span><br> Революция в Децентрализованных Комиксах!
                 </h1>
                 <p class="text-2xl text-lighttext mb-10 opacity-90">
@@ -105,7 +175,7 @@
                         </p>
                         <ul class="list-disc list-inside mt-6 text-gray-400">
                             <li class="mb-2"><strong class="text-primary">Сообщество:</strong> Активное и растущее сообщество единомышленников.</li>
-                            <li class="mb-2"><strong class="text-primary">Контент:</strong> Регулярные выпуски оригинальных мем-комиксов.</li>
+                            <li class="mb-2"><strong class="text-primary">Контент:</b> Регулярные выпуски оригинальных мем-комиксов.</li>
                             <li class="mb-2"><strong class="text-primary">Возможности:</strong> Эксклюзивный доступ и привилегии для держателей токена.</li>
                         </ul>
                     </div>
@@ -247,6 +317,13 @@
         const walletStatus = document.getElementById('walletStatus');
         const connectedAddress = document.getElementById('connectedAddress');
 
+        // Элементы мобильного меню
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const connectWalletBtnMobile = document.getElementById('connectWalletBtnMobile');
+
         // Инициализация WalletConnect
         let web3Provider = null;
 
@@ -282,6 +359,9 @@
                 console.error('Ошибка при подключении кошелька:', error);
                 walletStatus.textContent = 'Ошибка подключения. Проверьте консоль.';
                 connectedAddress.textContent = '';
+            } finally {
+                // Закрываем мобильное меню после попытки подключения
+                closeMobileMenu();
             }
         }
 
@@ -296,8 +376,39 @@
             // window.open(pancakeswapUrl, '_blank'); // Открывает в новой вкладке
             
             // В этом примере мы просто выводим сообщение, чтобы не перенаправлять пользователя из песочницы
-            alert("Вы бы были перенаправлены на PancakeSwap для покупки токена. (Функциональность смоделирована)");
+            showMessage("Вы бы были перенаправлены на PancakeSwap для покупки токена. (Функциональность смоделирована)", 3000);
             console.log(`Для покупки токена перейдите по ссылке: ${pancakeswapUrl}`);
+            closeMobileMenu(); // Закрываем мобильное меню после "покупки"
+        }
+
+        // Функции для открытия/закрытия мобильного меню
+        function openMobileMenu() {
+            mobileMenu.classList.remove('hidden-menu');
+            mobileMenu.classList.add('show-menu');
+            mobileMenuOverlay.classList.remove('hidden-overlay');
+            mobileMenuOverlay.classList.add('show-overlay');
+            document.body.style.overflowY = 'hidden'; // Запретить скролл страницы
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('show-menu');
+            mobileMenu.classList.add('hidden-menu');
+            mobileMenuOverlay.classList.remove('show-overlay');
+            mobileMenuOverlay.classList.add('hidden-overlay');
+            document.body.style.overflowY = ''; // Разрешить скролл страницы
+        }
+
+        // Функция для отображения всплывающих сообщений
+        function showMessage(message, duration = 2000) {
+            const messageBox = document.createElement('div');
+            messageBox.className = 'message-box show';
+            messageBox.textContent = message;
+            document.body.appendChild(messageBox);
+
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+                messageBox.remove();
+            }, duration);
         }
 
         // Обработчики событий для кнопок
@@ -305,6 +416,17 @@
         connectWalletBtnBottom.addEventListener('click', connectWallet);
         buyTokenBtn.addEventListener('click', buyToken);
         buyTokenBtnBottom.addEventListener('click', buyToken);
+
+        // Обработчики для мобильного меню
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+        closeMenuBtn.addEventListener('click', closeMobileMenu);
+        mobileMenuOverlay.addEventListener('click', closeMobileMenu); // Закрытие по клику на оверлей
+        connectWalletBtnMobile.addEventListener('click', connectWallet); // Кнопка "Подключить Кошелек" в мобильном меню
+
+        // Закрытие меню при клике на навигационную ссылку внутри него
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
     </script>
 </body>
 </html>
