@@ -145,7 +145,7 @@
         <a href="#comics" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()">Комиксы</a>
         <a href="#buy" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()">Купить Токен</a>
         <a href="#about" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()">О Нас</a>
-        <button id="connectWalletBtnMobile" class="bg-primary hover:bg-secondary text-lighttext font-bold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 w-full text-left">
+        <button id="connectWalletBtnMobile" class="bg-primary hover:bg-secondary text-lighttext font-bold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
             Подключить Кошелек
         </button>
     </div>
@@ -161,7 +161,7 @@
                 <p class="text-2xl text-lighttext mb-10 opacity-90">
                     Добро пожаловать в мир, где мемы оживают, а комиксы рассказывают историю.
                 </p>
-                <button id="buyTokenBtn" class="bg-accent hover:bg-pink-600 text-darkbg font-extrabold py-4 px-10 rounded-full text-2xl shadow-xl transform transition duration-300 ease-in-out hover:scale-110 border-4 border-accent">
+                <button id="buyTokenBtn" class="bg-accent hover:bg-pink-600 text-darkbg font-extrabold py-4 px-10 rounded-full text-2xl shadow-xl transform transition duration-300 ease-in-out hover:scale-105 border-4 border-accent">
                     Купить Ваш Токен Сейчас!
                 </button>
             </div>
@@ -283,7 +283,7 @@
                         <p class="text-gray-300 mb-6">
                             Для взаимодействия с децентрализованными приложениями, пожалуйста, подключите ваш Web3 кошелек.
                         </p>
-                        <button id="connectWalletBtnBottom" class="bg-primary hover:bg-secondary text-lighttext font-bold py-3 px-8 rounded-full text-lg shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+                        <button id="connectWalletBtnBottom" class="bg-primary hover:bg-secondary text-lighttext font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
                             Подключить Кошелек
                         </button>
                         <p id="walletStatus" class="mt-4 text-sm text-gray-400"></p>
@@ -295,7 +295,7 @@
                         <p class="text-gray-300 mb-6">
                             Самый простой способ стать частью нашего сообщества — приобрести наш мем-токен.
                         </p>
-                        <button id="buyTokenBtnBottom" class="bg-accent hover:bg-pink-600 text-darkbg font-bold py-3 px-8 rounded-full text-lg shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+                        <button id="buyTokenBtnBottom" class="bg-accent hover:bg-pink-600 text-darkbg font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
                             Купить Токен
                         </button>
                     </div>
@@ -313,4 +313,132 @@
             <p>&copy; 2025 Ваш Мем-Токен. Все права защищены.</p>
             <div class="flex justify-center space-x-6 mt-4">
                 <a href="#" class="text-gray-400 hover:text-primary transition duration-300 ease-in-out">Twitter</a>
-                <a href="#" class="text-gray-400 hover:text-primary transition duration-300 ease-in-out">
+                <a href="#" class="text-gray-400 hover:text-primary transition duration-300 ease-in-out">Telegram</a>
+                <a href="#" class="text-gray-400 hover:text-primary transition duration-300 ease-in-out">Discord</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Подключение WalletConnect (пример) -->
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+    <script>
+        const connectWalletBtn = document.getElementById('connectWalletBtn');
+        const connectWalletBtnBottom = document.getElementById('connectWalletBtnBottom');
+        const buyTokenBtn = document.getElementById('buyTokenBtn');
+        const buyTokenBtnBottom = document.getElementById('buyTokenBtnBottom');
+        const walletStatus = document.getElementById('walletStatus');
+        const connectedAddress = document.getElementById('connectedAddress');
+
+        // Элементы мобильного меню
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+        const connectWalletBtnMobile = document.getElementById('connectWalletBtnMobile');
+
+        // Инициализация WalletConnect
+        let web3Provider = null;
+
+        // Функция для подключения кошелька
+        async function connectWallet() {
+            walletStatus.textContent = 'Подключение...';
+            connectedAddress.textContent = '';
+            try {
+                // WalletConnectProvider требуется для WalletConnect v1
+                // Для v2 используется @walletconnect/modal, что сложнее для простой фронтенд демонстрации.
+                // Этот код для демонстрации WalletConnect v1.
+                web3Provider = new WalletConnectProvider.default({
+                    // Замените на реальные RPC URL для нужной сети
+                    rpc: {
+                        1: "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID", // Пример: Ethereum Mainnet
+                        // 56: "https://bsc-dataseed.binance.org/", // Пример: Binance Smart Chain
+                    },
+                    // Укажите bridge URL, если необходимо
+                    // bridge: "https://bridge.walletconnect.org",
+                });
+
+                await web3Provider.enable(); // Запускает процесс подключения
+
+                const accounts = web3Provider.accounts;
+                if (accounts.length > 0) {
+                    walletStatus.textContent = 'Кошелек подключен!';
+                    connectedAddress.textContent = `Адрес: ${accounts[0]}`;
+                    console.log('Подключенный адрес:', accounts[0]);
+                } else {
+                    walletStatus.textContent = 'Не удалось получить адрес.';
+                }
+            } catch (error) {
+                console.error('Ошибка при подключении кошелька:', error);
+                walletStatus.textContent = 'Ошибка подключения. Проверьте консоль.';
+                connectedAddress.textContent = '';
+            } finally {
+                // Закрываем мобильное меню после попытки подключения
+                closeMobileMenu();
+            }
+        }
+
+        // Функция для покупки токена (симуляция)
+        function buyToken() {
+            // В реальном приложении здесь будет код для взаимодействия со смарт-контрактом
+            // или перенаправление на DEX (например, PancakeSwap, Uniswap)
+            console.log('Попытка покупки токена...');
+            // Пример перенаправления на PancakeSwap для FLOKI (замените адрес контракта токена на свой)
+            const tokenAddress = '0x1A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7F8A9B'; // ЗАМЕНИТЕ НА АДРЕС ВАШЕГО ТОКЕНА
+            const pancakeswapUrl = `https://pancakeswap.finance/swap?outputCurrency=${tokenAddress}`;
+            // window.open(pancakeswapUrl, '_blank'); // Открывает в новой вкладке
+            
+            // В этом примере мы просто выводим сообщение, чтобы не перенаправлять пользователя из песочницы
+            showMessage("Вы бы были перенаправлены на PancakeSwap для покупки токена. (Функциональность смоделирована)", 3000);
+            console.log(`Для покупки токена перейдите по ссылке: ${pancakeswapUrl}`);
+            closeMobileMenu(); // Закрываем мобильное меню после "покупки"
+        }
+
+        // Функции для открытия/закрытия мобильного меню
+        function openMobileMenu() {
+            mobileMenu.classList.remove('hidden-menu');
+            mobileMenu.classList.add('show-menu');
+            mobileMenuOverlay.classList.remove('hidden-overlay');
+            mobileMenuOverlay.classList.add('show-overlay');
+            document.body.style.overflowY = 'hidden'; // Запретить скролл страницы
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('show-menu');
+            mobileMenu.classList.add('hidden-menu');
+            mobileMenuOverlay.classList.remove('show-overlay');
+            mobileMenuOverlay.classList.add('hidden-overlay');
+            document.body.style.overflowY = ''; // Разрешить скролл страницы
+        }
+
+        // Функция для отображения всплывающих сообщений
+        function showMessage(message, duration = 2000) {
+            const messageBox = document.createElement('div');
+            messageBox.className = 'message-box show';
+            messageBox.textContent = message;
+            document.body.appendChild(messageBox);
+
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+                messageBox.remove();
+            }, duration);
+        }
+
+        // Обработчики событий для кнопок
+        connectWalletBtn.addEventListener('click', connectWallet);
+        connectWalletBtnBottom.addEventListener('click', connectWallet);
+        buyTokenBtn.addEventListener('click', buyToken);
+        buyTokenBtnBottom.addEventListener('click', buyToken);
+
+        // Обработчики для мобильного меню
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+        closeMenuBtn.addEventListener('click', closeMobileMenu);
+        mobileMenuOverlay.addEventListener('click', closeMobileMenu); // Закрытие по клику на оверлей
+        connectWalletBtnMobile.addEventListener('click', connectWallet); // Кнопка "Подключить Кошелек" в мобильном меню
+
+        // Закрытие меню при клике на навигационную ссылку внутри него
+        document.querySelectorAll('#mobileMenu a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+    </script>
+</body>
+</html>
