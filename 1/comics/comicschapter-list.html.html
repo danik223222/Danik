@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-key="chapterListPageTitle">Ваш Мем-Токен | Список Эпизодов</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Настройки Tailwind CSS для использования шрифта Inter и кастомизации -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Новая желто-черная палитра
+                        primary: '#FFD700', // Яркий золотисто-желтый
+                        secondary: '#333333', // Темно-серый для контраста
+                        accent: '#000000', // Чистый черный для акцентов
+                        darkbg: '#000000', // Основной фон (чистый черный)
+                        deepdark: '#1A1A1A', // Очень темный серый для некоторых элементов
+                        lighttext: '#FFFFCC', // Светлый желтоватый текст
+                        overlay: 'rgba(0, 0, 0, 0.95)', // Оверлей
+                        headerbg: '#000000', // Чистый черный для шапки
+                        panelbg: '#1A1A1A', // Фон боковых панелей/карточек
+                    }
+                }
+            },
+            plugins: [
+                function ({ addUtilities }) {
+                    const newUtilities = {
+                        '.no-cls': {
+                            'min-height': '1px', /* or appropriate min-height/width */
+                            'min-width': '1px',
+                        },
+                    }
+                    addUtilities(newUtilities)
+                }
+            ]
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Соответствует darkbg */
+            color: #FFFFCC;
+            overflow-x: hidden;
+            padding-top: 90px; /* Отступ сверху для шапки */
+        }
+        /* Стили для скроллбара */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1A1A1A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFD700;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFFFCC;
+        }
+
+        /* Шапка страницы */
+        .page-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 999;
+            padding: 0.75rem;
+        }
+        .page-header-container {
+            background-color: #000000;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 90rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 1rem;
+        }
+        .header-back-arrow {
+            display: flex;
+            align-items: center;
+            color: #FFFFCC;
+            font-size: 2rem;
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            border-radius: 9999px;
+            padding: 0.5rem;
+        }
+        .header-back-arrow:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .header-back-arrow svg {
+            width: 1.5em;
+            height: 1.5em;
+        }
+
+        /* Карточки глав */
+        .chapter-card {
+            background-color: #1A1A1A; /* panelbg */
+            border-radius: 1.5rem; /* rounded-3xl */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transform: scale(1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border: 4px solid #333333; /* secondary */
+        }
+        .chapter-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+        }
+        .chapter-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .chapter-card.locked:hover {
+            transform: scale(1); /* Отключаем hover эффект для заблокированных */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        .chapter-card img {
+            width: 100%;
+            height: 20rem; /* h-80 */
+            object-fit: cover;
+            object-position: top;
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+        }
+        .chapter-card-title {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: bold;
+            color: #FFD700; /* primary */
+            margin-bottom: 0.5rem;
+        }
+        .chapter-card-desc {
+            color: #FFFFCC; /* lighttext */
+            font-size: 0.875rem; /* text-sm */
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+        .chapter-card-button {
+            display: inline-block;
+            background-color: #FFD700; /* primary */
+            color: #000000; /* accent */
+            font-weight: 600; /* font-semibold */
+            padding: 0.5rem 1.25rem; /* py-2 px-5 */
+            border-radius: 9999px; /* rounded-full */
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .chapter-card-button:hover {
+            background-color: #FFFFCC; /* lighttext */
+            transform: scale(1.05);
+        }
+        .chapter-card.locked .chapter-card-button {
+            background-color: #333333; /* secondary */
+            color: #666666; /* disabled text */
+            cursor: not-allowed;
+            transform: none;
+        }
+        .chapter-card.locked .chapter-card-button:hover {
+            background-color: #333333;
+        }
+        .lock-icon-card {
+            font-size: 1.5rem;
+            color: #999999;
+            margin-left: 0.5rem;
+        }
+
+        /* Адаптивность для шапки */
+        @media (max-width: 767px) {
+            body {
+                padding-top: 70px; /* Более компактный отступ для мобильной шапки */
+            }
+            .page-header-container {
+                height: 56px;
+            }
+            .header-back-arrow {
+                font-size: 1.5rem;
+                padding: 0.25rem;
+            }
+            .header-back-arrow svg {
+                width: 1.25em;
+                height: 1.25em;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter">
+    <!-- Шапка страницы списка эпизодов -->
+    <header class="page-header">
+        <div class="page-header-container">
+            <!-- Кнопка "Назад на главную" -->
+            <a href="../../index.html#readComicsDrive" class="header-back-arrow">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </a>
+            
+            <h1 class="text-2xl sm:text-3xl font-bold text-lighttext" data-lang-key="chapterListPageTitle">Список Эпизодов</h1>
+
+            <!-- Правая часть (можно добавить кнопки входа/регистрации, если нужно) -->
+            <div class="flex items-center space-x-4">
+                 <button class="bg-primary hover:bg-lighttext text-accent font-bold py-1 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hidden lg:block" data-lang-key="loginRegisterBtn">
+                    Вход/Регистрация
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="py-20 bg-darkbg text-center">
+        <div class="container mx-auto px-6">
+            <p class="text-lg sm:text-xl text-lighttext mb-12 max-w-3xl mx-auto" data-lang-key="chapterListSubtitle">
+                Выберите эпизод, чтобы начать чтение. Новые главы добавляются регулярно!
+            </p>
+
+            <div id="chaptersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Карточки глав будут сгенерированы здесь JS -->
+            </div>
+        </main>
+
+    <!-- Подвал сайта (можно скопировать с главной страницы) -->
+    <footer class="bg-darkbg py-8 text-lighttext text-center">
+        <div class="container mx-auto px-6">
+            <p data-lang-key="footerCopyright">&copy; 2025 Ваш Мем-Токен. Все права защищены.</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="#" class="text-lighttext hover:text-primary transition duration-300 ease-in-out">Twitter</a>
+                <a href="#" class="text-lighttext hover:text-primary transition duration-300 ease-in-out">Telegram</a>
+                <a href="#" class="text-lighttext hover:text-primary transition duration-300 ease-in-out">Discord</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Объект с переводами
+        const translations = {
+            ru: {
+                chapterListPageTitle: 'Ваш Мем-Токен | Список Эпизодов',
+                chapterListSubtitle: 'Выберите эпизод, чтобы начать чтение. Новые главы добавляются регулярно!',
+                readNowBtn: 'Читать сейчас',
+                chapterLocked: 'Эта глава заблокирована.',
+                loginRegisterBtn: 'Вход/Регистрация',
+                footerCopyright: '&copy; 2025 Ваш Мем-Токен. Все права защищены.',
+                simulatedLoginRegister: 'Функциональность входа/регистрации смоделирована.',
+            },
+            en: {
+                chapterListPageTitle: 'Your Meme Token | Episode List',
+                chapterListSubtitle: 'Select an episode to start reading. New chapters are added regularly!',
+                readNowBtn: 'Read Now',
+                chapterLocked: 'This chapter is locked.',
+                loginRegisterBtn: 'Login/Register',
+                footerCopyright: '&copy; 2025 Your Meme Token. All rights reserved.',
+                simulatedLoginRegister: 'Login/Registration functionality simulated.',
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'ru';
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    element.innerHTML = translations[currentLang][key];
+                }
+            });
+            document.title = translations[currentLang].chapterListPageTitle;
+        }
+
+        // --- Массив со всеми главами (должен быть идентичен на всех страницах) ---
+        // !!! ВАЖНО: Обновите этот массив, используя ОТНОСИТЕЛЬНЫЕ пути к обложкам в вашем репозитории GitHub.
+        // !!! ПРОВЕРЬТЕ ПУТИ, ОНИ ДОЛЖНЫ СООТВЕТСТВОВАТЬ ВАШЕЙ СТРУКТУРЕ ПАПОК.
+        // !!! Например, если chapter-list.html находится в папке /comics/,
+        // !!! а обложки находятся в папке /comics/covers/, то путь будет './covers/имя_файла.webp'.
+        // !!! УБЕДИТЕСЬ, ЧТО ВСЕ ФАЙЛЫ ОБЛОЖЕК ЗАГРУЖЕНЫ В ВАШ РЕПОЗИТОРИЙ GITHUB!
+        const allComicChapters = [
+            { id: 1, title_ru: 'Эпизод 1', title_en: 'Episode 1', path: './comic-episode-1/episode-1.html', cover: './covers/episode2_cover.webp', desc_ru: 'Герой отправляется в опасное путешествие.', desc_en: 'The hero embarks on a dangerous journey.' },
+            { id: 2, title_ru: 'Эпизод 2', title_en: 'Episode 2', path: './comic-episode-2/episode-2.html', cover: './covers/episode2_cover.webp', desc_ru: 'Наш герой сталкивается с хитрыми "газ-фи".', desc_en: 'Our hero faces cunning "gas fees".' },
+            { id: 3, title_ru: 'Эпизод 3', title_en: 'Episode 3', path: './comic-episode-3/episode-3.html', cover: './covers/episode3_cover.webp', desc_ru: 'Мем-армия сражается с силами медвежьего рынка.', desc_en: 'The meme army fights the bear market.' },
+            { id: 4, title_ru: 'Эпизод 4', title_en: 'Episode 4', path: './comic-episode-4/episode-4.html', cover: './covers/episode4_cover.webp', desc_ru: 'Загадочное исчезновение ликвидности.', desc_en: 'Mysterious disappearance of liquidity.' },
+            { id: 5, title_ru: 'Эпизод 5', title_en: 'Episode 5', path: './comic-episode-5/episode-5.html', cover: './covers/episode5_cover.webp', desc_ru: 'Восстание Дожей.', desc_en: 'Rise of the Doge.' },
+            { id: 6, title_ru: 'Эпизод 6', title_en: 'Episode 6', path: './comic-episode-6/episode-6.html', cover: './covers/episode6_cover.webp', desc_ru: 'Новые приключения ждут!', desc_en: 'New adventures await!', locked: true },
+            { id: 7, title_ru: 'Эпизод 7 (премиум)', title_en: 'Episode 7 (premium)', path: './comic-episode-7/episode-7.html', cover: './covers/episode7_cover.webp', desc_ru: 'Эксклюзивный контент для держателей токенов.', desc_en: 'Exclusive content for token holders.', locked: true },
+        ];
+
+        // Функция для рендеринга карточек глав
+        function renderChapters() {
+            const chaptersGrid = document.getElementById('chaptersGrid');
+            chaptersGrid.innerHTML = ''; // Очищаем сетку перед рендерингом
+
+            if (allComicChapters.length === 0) {
+                chaptersGrid.innerHTML = `<p class="text-xl text-lighttext text-center col-span-full">
+                    ${currentLang === 'ru' ? 'Список глав пуст. Добавьте главы в массив allComicChapters.' : 'Chapter list is empty. Add chapters to the allComicChapters array.'}
+                </p>`;
+                return;
+            }
+
+            allComicChapters.forEach(chapter => {
+                const chapterCard = document.createElement('div');
+                chapterCard.className = `chapter-card ${chapter.locked ? 'locked' : ''}`;
+                
+                const coverImage = chapter.cover || 'https://placehold.co/400x550/1A1A1A/FFD700?text=Нет+обложки'; // Заглушка, если нет обложки
+
+                chapterCard.innerHTML = `
+                    <img src="${coverImage}" alt="${chapter[`title_${currentLang}`]}" onerror="this.onerror=null; console.error('Ошибка загрузки обложки для главы ${chapter.id}: ${coverImage}'); this.src='https://placehold.co/400x550/1A1A1A/FFD700?text=ОШИБКА+ЗАГРУЗКИ%0AПРОВЕРЬТЕ+ПУТЬ+И+ФАЙЛ%0AГЛАВА+${chapter.id}';" />
+                    <div class="p-6 text-left">
+                        <h3 class="chapter-card-title flex items-center">
+                            ${chapter[`title_${currentLang}`]}
+                            ${chapter.locked ? '<span class="lock-icon-card ml-2">🔒</span>' : ''}
+                        </h3>
+                        <p class="chapter-card-desc">
+                            ${chapter[`desc_${currentLang}`]}
+                        </p>
+                        <button class="chapter-card-button" data-chapter-id="${chapter.id}" ${chapter.locked ? 'disabled' : ''}>
+                            ${translations[currentLang].readNowBtn}
+                        </button>
+                    </div>
+                `;
+                
+                // Добавляем обработчик события для кнопки "Читать сейчас"
+                const readButton = chapterCard.querySelector('.chapter-card-button');
+                readButton.addEventListener('click', () => {
+                    if (!chapter.locked) {
+                        window.location.href = chapter.path; // Переходим на страницу главы
+                    } else {
+                        showMessage(translations[currentLang].chapterLocked, 2000);
+                    }
+                });
+
+                chaptersGrid.appendChild(chapterCard);
+            });
+        }
+
+        // Функция для отображения всплывающих сообщений
+        function showMessage(message, duration = 2000) {
+            const messageBox = document.createElement('div');
+            messageBox.className = 'message-box show fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-deepdark text-lighttext p-4 rounded-lg shadow-lg z-[1001]';
+            messageBox.textContent = message;
+            document.body.appendChild(messageBox);
+
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+                messageBox.remove();
+            }, duration);
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTranslations(); // Применяем переводы
+            renderChapters(); // Рендерим список глав
+
+            // Заглушка для кнопки входа/регистрации
+            const loginRegisterBtn = document.querySelector('.hidden-lg'); 
+            if (loginRegisterBtn) {
+                loginRegisterBtn.addEventListener('click', () => {
+                    showMessage(translations[currentLang].simulatedLoginRegister, 2000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
