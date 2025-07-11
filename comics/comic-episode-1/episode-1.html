@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-key="comicPageTitle">Ваш Мем-Токен | Эпизод X</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Новая желто-черная палитра
+                        primary: '#FFD700', // Яркий золотисто-желтый
+                        secondary: '#333333', // Темно-серый для контраста
+                        accent: '#000000', // Чистый черный для акцентов
+                        darkbg: '#000000', // Основной фон (чистый черный)
+                        deepdark: '#1A1A1A', // Очень темный серый для некоторых элементов
+                        lighttext: '#FFFFCC', // Светлый желтоватый текст
+                        overlay: 'rgba(0, 0, 0, 0.95)', // Оверлей
+                        headerbg: '#000000', // Чистый черный для шапки
+                        panelbg: '#1A1A1A', // Фон боковых панелей/карточек
+                    }
+                }
+            },
+            plugins: [
+                function ({ addUtilities }) {
+                    const newUtilities = {
+                        '.no-cls': {
+                            'min-height': '1px', /* or appropriate min-height/width */
+                            'min-width': '1px',
+                        },
+                    }
+                    addUtilities(newUtilities)
+                }
+            ]
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Соответствует новому darkbg */
+            color: #FFFFCC;
+            overflow-x: hidden; /* Важно для предотвращения горизонтального скролла на body */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-top: 120px; /* Отступ сверху для шапки (60px) и блока навигации глав (60px) */
+        }
+        /* Стили для скроллбара, чтобы он соответствовал дизайну */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px; /* Для горизонтального скролла */
+        }
+        ::-webkit-scrollbar-track {
+            background: #1A1A1A; /* Темный фон трека */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFD700; /* Цвет ползунка */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFFFCC; /* Цвет ползунка при наведении */
+        }
+
+        .comic-page-img {
+            max-width: 90%; /* Ограничение ширины изображения комикса */
+            height: auto;
+            display: block; /* Убираем лишние пробелы под изображением */
+            margin: 0 auto; /* Центрируем изображение */
+            border-radius: 0.5rem; /* Закругленные углы, немного меньше */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7); /* Более выраженная тень */
+            object-fit: contain; /* Обеспечивает, что изображение полностью видно */
+        }
+
+        /* Общие стили для кнопок навигации */
+        .nav-btn {
+            background-color: #1A1A1A; /* Darker gray for general buttons */
+            color: #FFFFCC;
+            font-weight: bold;
+            padding: 0.5rem 1rem; /* Slightly smaller padding */
+            border-radius: 9999px; /* Fully rounded */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            display: flex; /* Для центрирования текста/иконок */
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* Чтобы кнопки не сжимались на мобильных */
+        }
+        .nav-btn:hover {
+            background-color: #333333; /* Lighter gray on hover */
+            transform: scale(1.05);
+        }
+        .nav-btn:disabled {
+            background-color: #000000; /* darker gray for disabled */
+            color: #666666; /* disabled text */
+            cursor: not-allowed;
+            transform: none; /* No scale on disabled */
+        }
+
+        /* Уточняем стили для специфичных кнопок в шапке */
+        .header-nav-btn {
+            padding: 0.6rem 1.2rem; /* Немного больше, чем .nav-btn */
+            background-color: #1A1A1A; /* Темный фон для кнопок в шапке */
+        }
+        .header-nav-btn:hover {
+            background-color: #333333;
+        }
+         /* Стили для кнопки "Назад" в шапке комикса */
+        .header-back-btn {
+            padding: 0.5rem 0.75rem; /* Уменьшаем padding */
+            background-color: transparent; /* Прозрачный фон */
+            box-shadow: none; /* Без тени */
+        }
+        .header-back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Легкий фон при наведении */
+            transform: none; /* Без масштабирования */
+        }
+
+        /* --- Стили для основного контейнера комикса --- */
+        .comic-main-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Комикс начинается сверху */
+            padding-top: 1rem; /* Добавим небольшой отступ от блока навигации глав */
+            min-height: calc(100vh - 120px - 2rem); /* Учитываем высоту шапки+блока глав и нижнего nav */
+            box-sizing: border-box; /* Учитывает padding в размере */
+        }
+
+        /* --- Стили для контейнера страниц комикса --- */
+        .comic-pages-container {
+            display: flex;
+            flex-direction: column; /* Всегда вертикальная прокрутка */
+            align-items: center; /* Центрируем страницы */
+            width: 100%;
+            position: relative; /* Для позиционирования страниц */
+            /* Убираем overflow-x и scroll-snap-type, так как это для горизонтального режима */
+        }
+
+        .comic-page-wrapper {
+            flex-shrink: 0; /* Страницы не сжимаются */
+            width: 100%; /* Каждая страница занимает полную ширину контейнера */
+            display: flex;
+            flex-direction: column; /* Элементы в столбик, чтобы сообщение об ошибке было под изображением */
+            justify-content: center;
+            align-items: center;
+            padding: 1rem; /* Отступ вокруг каждой страницы */
+            margin-bottom: 2rem; /* Отступ между страницами в вертикальном режиме */
+        }
+        .comic-page-wrapper img {
+            max-height: 90vh; /* Ограничиваем высоту для лучшего просмотра на экранах */
+            max-width: 90%; /* Изображение также ограничено 90% ширины */
+            object-fit: contain;
+        }
+        .comic-page-error-message {
+            color: #FFD700; /* Primary color for error */
+            margin-top: 1rem;
+            font-size: 0.875rem; /* text-sm */
+        }
+
+        /* Стили для боковой панели списка глав - УДАЛЕНО из HTML, но стили оставлены, если вдруг понадобятся */
+        .chapter-list-panel {
+            display: none; /* Полностью скрываем, так как функционал перенесен */
+        }
+        .chapter-list-overlay {
+            display: none; /* Полностью скрываем */
+        }
+
+        /* Зафиксированная нижняя навигация */
+        .fixed-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #000000; /* Чистый черный */
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.7);
+            z-index: 990;
+        }
+
+        /* --- Унифицированная шапка для комиксов (аналогично главной) --- */
+        .comic-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 999;
+            padding: 0.75rem; /* Общий отступ */
+        }
+        .comic-header-container {
+            background-color: #000000; /* headerbg */
+            border-radius: 9999px; /* Полностью скругленный */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            height: 60px; /* Фиксированная высота */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 90rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 1rem;
+        }
+        .comic-header-back-arrow { /* Новый класс для стрелки назад */
+            display: flex;
+            align-items: center;
+            color: #FFFFCC; /* lighttext */
+            font-size: 2rem; /* Увеличенный размер для иконки */
+            font-weight: bold;
+            transition: all 0.3s ease-in-out;
+            border-radius: 9999px;
+            padding: 0.5rem;
+        }
+        .comic-header-back-arrow:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .comic-header-back-arrow svg {
+            width: 1.5em;
+            height: 1.5em;
+        }
+
+        /* --- Блок навигации по главам под шапкой --- */
+        .chapter-navigation-block {
+            padding: 1rem 2rem;
+            background-color: #1A1A1A; /* deepdark */
+            border-bottom: 1px solid #333333; /* secondary */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            position: fixed; /* Фиксирован под шапкой */
+            top: 60px; /* Высота шапки */
+            width: 100%;
+            z-index: 998; /* Чуть ниже шапки */
+        }
+        .chapter-navigation-block .nav-btn {
+            padding: 0.4rem 0.8rem;
+            background-color: #000000; /* darkbg */
+        }
+        .chapter-navigation-block .nav-btn:hover {
+            background-color: #333333; /* secondary */
+        }
+        /* --- Адаптивность для шапки и нового блока навигации по главам --- */
+        @media (max-width: 767px) {
+            /* Mobile (up to md breakpoint) */
+            body {
+                padding-top: 112px; /* Отступ для шапки (56px) + блока глав (56px) */
+            }
+            .comic-header-container {
+                height: 56px; /* Более компактная мобильная шапка */
+            }
+            .comic-header-back-arrow {
+                font-size: 1.5rem; /* Чуть меньше на мобильных */
+                padding: 0.25rem;
+            }
+            .comic-header-back-arrow svg {
+                width: 1.25em;
+                height: 1.25em;
+            }
+            .chapter-navigation-block {
+                top: 56px; /* Отступ для новой мобильной шапки */
+                padding: 0.75rem 1rem;
+                gap: 0.75rem;
+            }
+            .chapter-navigation-block .text-xl { /* Размер текста главы */
+                font-size: 1.125rem; /* text-lg */
+                white-space: nowrap; /* Чтобы не переносился */
+                overflow: hidden; /* Скрыть, если длинный */
+                text-overflow: ellipsis; /* Добавить многоточие */
+            }
+            .chapter-navigation-block .nav-btn {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.9rem;
+            }
+            .comic-main-wrapper {
+                padding-top: 1rem; /* Отступ от блока навигации глав */
+            }
+        }
+        /* Адаптивность для боковой панели на мобильных */
+        @media (max-width: 640px) { /* sm breakpoint */
+            .chapter-list-panel {
+                width: 100%; /* На мобильных занимает всю ширину */
+            }
+        }
+        /* Центрирование элементов в нижней навигации на мобильных */
+        @media (max-width: 767px) {
+            .fixed-bottom-nav {
+                justify-content: space-around; /* Равномерно распределить элементы */
+                padding: 0.75rem 1rem;
+            }
+            .fixed-bottom-nav .nav-btn {
+                padding: 0.5rem 1rem; /* Меньше кнопки */
+                font-size: 1rem;
+            }
+            .fixed-bottom-nav .text-xl {
+                font-size: 1.25rem; /* Счетчик страниц */
+            }
+        }
+        /* Добавлены стили для обводки кнопок */
+        .app-header-nav-btn, .nav-btn, #loginRegisterBtn, #mobileLoginRegisterBtn, .chapter-card button {
+            border: 1px solid #FFD700; /* Тонкая желтая обводка */
+        }
+        .app-header-nav-btn:hover, .nav-btn:hover, #loginRegisterBtn:hover, #mobileLoginRegisterBtn:hover, .chapter-card button:hover {
+            border-color: #FFFFCC; /* Светло-желтая обводка при наведении */
+        }
+    </style>
+</head>
+<body class="font-inter">
+    <header class="comic-header">
+        <div class="comic-header-container">
+            <a href="../../index.html#readComicsDrive" class="comic-header-back-arrow">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span class="ml-2" data-lang-key="backToHome">На главную</span>
+            </a>
+            <button id="loginRegisterBtn" class="hidden-on-mobile bg-primary hover:bg-lighttext text-accent font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 ease-in-out text-base" data-lang-key="loginRegisterBtn">
+                Вход / Регистрация
+            </button>
+            <button id="mobileLoginRegisterBtn" class="block md:hidden bg-primary hover:bg-lighttext text-accent font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 ease-in-out text-base" data-lang-key="loginRegisterBtn">
+                Вход / Регистрация
+            </button>
+        </div>
+    </header>
+
+    <div class="chapter-navigation-block fixed w-full top-[60px] md:top-[60px] z-20">
+        <button id="prevChapterBtn" class="nav-btn p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed" data-lang-key="prevChapter">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <span id="currentChapterTitle" class="text-xl font-bold text-primary mr-2" data-lang-key="chapterTitle">Глава X</span>
+        <button id="nextChapterBtn" class="nav-btn p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed" data-lang-key="nextChapter">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+        <button id="openChapterListBtn" class="nav-btn p-2 ml-4" data-lang-key="chapterListBtn">
+            Список глав
+        </button>
+    </div>
+
+    <main class="comic-main-wrapper flex flex-col items-center justify-center min-h-screen pt-4 pb-20">
+        <div id="comicPagesContainer" class="comic-pages-container">
+            </div>
+    </main>
+
+    <nav class="fixed-bottom-nav">
+        <button id="bottomPrevChapterBtn" class="nav-btn px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed" data-lang-key="prevChapter">
+            Назад
+        </button>
+        <span id="pageCounter" class="text-xl font-bold text-primary" data-lang-key="pageCount">Страница X из Y</span>
+        <button id="bottomNextChapterBtn" class="nav-btn px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed" data-lang-key="nextChapter">
+            Вперед
+        </button>
+    </nav>
+
+    <script>
+        const translations = {
+            ru: {
+                comicPageTitle: 'Ваш Мем-Токен | Эпизод X',
+                backToHome: 'На главную',
+                loginRegisterBtn: 'Вход / Регистрация',
+                prevChapter: 'Назад',
+                nextChapter: 'Вперед',
+                chapterListBtn: 'Список глав',
+                chapterTitle: 'Глава X', // Обновляется динамически
+                pageCount: 'Страница X из Y', // Обновляется динамически
+                simulatedLoginRegister: 'Функциональность входа/регистрации смоделирована.',
+                errorLoadingImage: 'Не удалось загрузить изображение.'
+            },
+            en: {
+                comicPageTitle: 'Your Meme Token | Episode X',
+                backToHome: 'Back to Home',
+                loginRegisterBtn: 'Login / Register',
+                prevChapter: 'Previous',
+                nextChapter: 'Next',
+                chapterListBtn: 'Chapter List',
+                chapterTitle: 'Chapter X',
+                pageCount: 'Page X of Y',
+                simulatedLoginRegister: 'Login/Registration functionality simulated.',
+                errorLoadingImage: 'Failed to load image.'
+            }
+        };
+
+        let currentLang = 'ru'; // Язык по умолчанию
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[currentLang][key]) {
+                    element.textContent = translations[currentLang][key];
+                }
+            });
+            // Особый случай для заголовка страницы
+            document.title = translations[currentLang].comicPageTitle;
+        }
+
+        // Данные о всех главах (должны быть синхронизированы с comicschapter-list.html)
+        const allComicChapters = [
+            {
+                id: 1,
+                titleKey: 'chapter1Title',
+                path: 'comic-episode-1/episode-1.html',
+                pages: [
+                    '../../assets/comic/episode-1/page-1.jpg',
+                    '../../assets/comic/episode-1/page-2.jpg'
+                ]
+            },
+            {
+                id: 2,
+                titleKey: 'chapter2Title',
+                path: 'comic-episode-2/episode-2.html',
+                pages: [
+                    '../../assets/comic/episode-2/page-1.jpg',
+                    '../../assets/comic/episode-2/page-2.jpg'
+                ]
+            },
+            // Добавьте остальные главы по аналогии
+        ];
+
+        let currentChapterId = 1; // Текущая глава, которую мы просматриваем (извлекается из URL или устанавливается по умолчанию)
+        let currentPageIndex = 0; // Текущая страница в главе
+
+        // Элементы DOM
+        const comicPagesContainer = document.getElementById('comicPagesContainer');
+        const prevChapterBtn = document.getElementById('prevChapterBtn');
+        const nextChapterBtn = document.getElementById('nextChapterBtn');
+        const bottomPrevChapterBtn = document.getElementById('bottomPrevChapterBtn');
+        const bottomNextChapterBtn = document.getElementById('bottomNextChapterBtn');
+        const currentChapterTitleElement = document.getElementById('currentChapterTitle');
+        const pageCounterElement = document.getElementById('pageCounter');
+
+        // Получаем ID текущей главы из URL (если он есть)
+        function getChapterIdFromUrl() {
+            const pathSegments = window.location.pathname.split('/');
+            const episodeSegment = pathSegments.find(segment => segment.startsWith('comic-episode-'));
+            if (episodeSegment) {
+                const id = parseInt(episodeSegment.replace('comic-episode-', ''));
+                if (!isNaN(id)) {
+                    return id;
+                }
+            }
+            return 1; // По умолчанию глава 1
+        }
+
+        currentChapterId = getChapterIdFromUrl();
+
+        function loadChapter(chapterId) {
+            const chapter = allComicChapters.find(ch => ch.id === chapterId);
+            if (chapter) {
+                currentChapterId = chapterId;
+                currentPageIndex = 0; // Сбрасываем страницу при смене главы
+                renderComicPages(chapter);
+                updateChapterNavigationButtons();
+                updatePageCounter();
+                updateChapterTitle(chapter.titleKey);
+            } else {
+                console.error(`Глава с ID ${chapterId} не найдена.`);
+                // Можно перенаправить на страницу списка глав или показать сообщение об ошибке
+                window.location.href = '../comicschapter-list.html'; // Обновленный путь
+            }
+        }
+
+        function renderComicPages(chapter) {
+            comicPagesContainer.innerHTML = ''; // Очищаем контейнер
+            chapter.pages.forEach((pagePath, index) => {
+                const pageWrapper = document.createElement('div');
+                pageWrapper.className = 'comic-page-wrapper';
+                const img = document.createElement('img');
+                img.src = pagePath;
+                img.alt = `${translations[currentLang].chapterTitle} - ${translations[currentLang].pageCount.replace('X', index + 1).replace('Y', chapter.pages.length)}`;
+                img.className = 'comic-page-img';
+                img.onerror = () => {
+                    const errorMessage = document.createElement('p');
+                    errorMessage.className = 'comic-page-error-message';
+                    errorMessage.textContent = translations[currentLang].errorLoadingImage;
+                    pageWrapper.appendChild(errorMessage);
+                };
+                pageWrapper.appendChild(img);
+                comicPagesContainer.appendChild(pageWrapper);
+            });
+        }
+
+        function updateChapterTitle(titleKey) {
+            const chapter = allComicChapters.find(ch => ch.id === currentChapterId);
+            if (chapter) {
+                currentChapterTitleElement.textContent = translations[currentLang][titleKey];
+                document.title = translations[currentLang].comicPageTitle.replace('X', currentChapterId);
+            }
+        }
+
+        function updatePageCounter() {
+            const chapter = allComicChapters.find(ch => ch.id === currentChapterId);
+            if (chapter) {
+                pageCounterElement.textContent = translations[currentLang].pageCount
+                    .replace('X', currentPageIndex + 1)
+                    .replace('Y', chapter.pages.length);
+            }
+        }
+
+        function updateChapterNavigationButtons() {
+            const prevChapterExists = allComicChapters.some(ch => ch.id === currentChapterId - 1);
+            const nextChapterExists = allComicChapters.some(ch => ch.id === currentChapterId + 1);
+
+            prevChapterBtn.disabled = !prevChapterExists;
+            bottomPrevChapterBtn.disabled = !prevChapterExists;
+            nextChapterBtn.disabled = !nextChapterExists;
+            bottomNextChapterBtn.disabled = !nextChapterExists;
+        }
+
+        function goToPrevChapter() {
+            const prevChapter = allComicChapters.find(ch => ch.id === currentChapterId - 1);
+            if (prevChapter) {
+                window.location.href = prevChapter.path;
+            }
+        }
+
+        function goToNextChapter() {
+            const nextChapter = allComicChapters.find(ch => ch.id === currentChapterId + 1);
+            if (nextChapter) {
+                window.location.href = nextChapter.path;
+            }
+        }
+
+        // Обработка скролла (для динамического обновления счетчика страниц, если нужно)
+        function handleScroll() {
+            // Если у вас много изображений и вы хотите обновлять pageCounter при скролле
+            // Этот код может быть сложнее, если страницы имеют разную высоту.
+            // Для начала, покажем просто первую страницу.
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTranslations(); // Применяем переводы
+            loadChapter(currentChapterId); // Загружаем текущую главу
+
+            // Заглушка для кнопки входа/регистрации
+            const loginRegisterBtn = document.querySelector('.hidden-on-mobile');
+            const mobileLoginRegisterBtn = document.querySelector('.block.md\\:hidden'); // Выбираем мобильную кнопку
+            if (loginRegisterBtn) {
+                loginRegisterBtn.addEventListener('click', () => {
+                    showMessage(translations[currentLang].simulatedLoginRegister, 2000);
+                });
+            }
+            if (mobileLoginRegisterBtn) { // Убедимся, что и мобильная кнопка тоже работает
+                mobileLoginRegisterBtn.addEventListener('click', () => {
+                    showMessage(translations[currentLang].simulatedLoginRegister, 2000);
+                });
+            }
+
+            // Привязка событий для верхней навигации глав
+            prevChapterBtn.addEventListener('click', goToPrevChapter);
+            nextChapterBtn.addEventListener('click', goToNextChapter);
+
+            // Привязка событий для нижней навигации страниц/глав
+            bottomPrevChapterBtn.addEventListener('click', goToPrevChapter);
+            bottomNextChapterBtn.addEventListener('click', goToNextChapter);
+
+            // Привязка события для кнопки "Список глав" - теперь перенаправляет
+            document.getElementById('openChapterListBtn').addEventListener('click', () => {
+                // Путь к новой странице со списком глав ОТНОСИТЕЛЬНО ТЕКУЩЕЙ СТРАНИЦЫ КОМИКСА
+                // episode-X.html находится в C:\Users\danik\Desktop\1\1\comics\comic-episode-1\
+                // comicschapter-list.html находится в C:\Users\danik\Desktop\1\1\comics\
+                // Нужно подняться на один уровень вверх (..)
+                window.location.href = '../comicschapter-list.html';
+            });
+
+            // Изначальное обновление кнопок навигации по главам при загрузке
+            updateChapterNavigationButtons();
+
+            // Добавляем обработчик скролла
+            window.addEventListener('scroll', handleScroll);
+        });
+    </script>
+</body>
+</html>
