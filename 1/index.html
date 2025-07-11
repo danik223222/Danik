@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-lang-key="pageTitle">Ваш Мем-Токен | Главная</title>
-    <!-- Подключение Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Настройки Tailwind CSS для использования шрифта Inter и кастомизации -->
     <script>
         tailwind.config = {
             theme: {
@@ -117,34 +115,36 @@
                 font-size: 1.5rem; /* Немного уменьшенный размер шрифта для мобильного лого */
             }
         }
+        /* Добавлены стили для обводки кнопок */
+        .app-header-nav-btn, .nav-btn, #connectWalletBtn, #connectWalletBtnMobile, .chapter-card button {
+            border: 1px solid #FFD700; /* Тонкая желтая обводка */
+        }
+        .app-header-nav-btn:hover, .nav-btn:hover, #connectWalletBtn:hover, #connectWalletBtnMobile:hover, .chapter-card button:hover {
+            border-color: #FFFFCC; /* Светло-желтая обводка при наведении */
+        }
     </style>
 </head>
 <body class="font-inter">
-    <!-- Шапка сайта -->
     <header class="fixed top-0 w-full z-50 py-3">
         <div class="header-container container mx-auto bg-headerbg rounded-full shadow-lg px-6 py-2 flex justify-between items-center max-w-7xl h-20 md:h-14">
-            <!-- Логотип (фото токена + название) -->
             <a href="#" class="text-3xl font-bold text-lighttext flex items-center rounded-full p-2 transition duration-300 ease-in-out hover:bg-deepdark">
-                <span class="text-primary text-5xl md:text-4xl mr-2">💎</span> 
+                <span class="text-primary text-5xl md:text-4xl mr-2">💎</span>
                 <span class="header-logo-text hidden sm:block md:text-3xl" data-lang-key="tokenName">ВашМемТокен</span>
             </a>
-            <!-- Навигационные ссылки для десктопа -->
             <div class="hidden md:flex space-x-6 items-center">
                 <a href="#home" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium" data-lang-key="navHome">Главная</a>
-                <a href="#readComicsDrive" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium" data-lang-key="navComics">Комиксы</a>
+                <a href="comics/comicschapter-list.html" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium" data-lang-key="navComics">Комиксы</a>
                 <a href="#buy" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium" data-lang-key="navBuyToken">Купить Токен</a>
                 <a href="#about" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium" data-lang-key="navAbout">О Нас</a>
                 <button id="connectWalletBtn" class="bg-primary hover:bg-lighttext text-accent font-bold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105" data-lang-key="connectWalletBtn">
                     Подключить Кошелек
                 </button>
-                <!-- Переключение языка для десктопа -->
                 <div class="flex space-x-2 ml-4">
                     <button class="lang-btn text-lighttext hover:text-primary font-bold py-1 px-3 rounded-full transition duration-300 ease-in-out bg-deepdark hover:bg-secondary" data-lang="ru">RU</button>
                     <button class="lang-btn text-lighttext hover:text-primary font-bold py-1 px-3 rounded-full transition duration-300 ease-in-out bg-deepdark hover:bg-secondary" data-lang="en">EN</button>
                 </div>
             </div>
 
-            <!-- Гамбургер-иконка для мобильных устройств -->
             <div class="md:hidden">
                 <button id="mobileMenuBtn" class="text-lighttext focus:outline-none p-2 rounded-md hover:bg-deepdark">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -155,10 +155,8 @@
         </div>
     </header>
 
-    <!-- Оверлей для мобильного меню -->
     <div id="mobileMenuOverlay" class="fixed inset-0 bg-overlay z-40 hidden-overlay"></div>
 
-    <!-- Мобильное меню (шторка) -->
     <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-panelbg z-50 shadow-lg p-6 hidden-menu flex flex-col justify-start items-start space-y-6">
         <button id="closeMenuBtn" class="absolute top-4 right-4 text-lighttext hover:text-primary focus:outline-none p-2 rounded-md hover:bg-secondary">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -166,283 +164,242 @@
             </svg>
         </button>
         <a href="#home" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()" data-lang-key="navHome">Главная</a>
-        <a href="#readComicsDrive" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()" data-lang-key="navComics">Комиксы</a>
+        <a href="comics/comicschapter-list.html" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()" data-lang-key="navComics">Комиксы</a>
         <a href="#buy" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()" data-lang-key="navBuyToken">Купить Токен</a>
         <a href="#about" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-xl font-medium w-full text-left" onclick="closeMobileMenu()" data-lang-key="navAbout">О Нас</a>
-        <button id="connectWalletBtnMobile" class="bg-primary hover:bg-lighttext text-accent font-bold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105" data-lang-key="connectWalletBtn">
-            Подключить Кошелек
-        </button>
-        <!-- Переключение языка для мобильного меню -->
+        <button id="connectWalletBtnMobile" class="bg-primary hover:bg-lighttext text-accent font-bold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105" data-lang-key="connectWalletBtn"> Подключить Кошелек </button>
         <div class="flex space-x-2 mt-6 w-full justify-center">
             <button class="lang-btn text-lighttext hover:text-primary font-bold py-1 px-3 rounded-full transition duration-300 ease-in-out bg-deepdark hover:bg-secondary" data-lang="ru">RU</button>
             <button class="lang-btn text-lighttext hover:text-primary font-bold py-1 px-3 rounded-full transition duration-300 ease-in-out bg-deepdark hover:bg-secondary" data-lang="en">EN</button>
         </div>
     </div>
-
     <main>
-        <!-- Секция Героя -->
         <section id="home" class="relative h-screen flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/000000/FFD700?text=ФОН+ДЛЯ+ВАШЕГО+МЕМ-ТОКЕНА');">
             <div class="absolute inset-0 bg-black opacity-60"></div>
             <div class="relative z-10 p-8 rounded-lg shadow-2xl max-w-4xl mx-auto backdrop-blur-sm bg-darkbg bg-opacity-70">
-                <!-- Изменены классы размера шрифта для лучшей адаптивности на ОЧЕНЬ маленьких экранах -->
-                <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-lighttext leading-tight mb-6" data-lang-key="heroTitle">
-                    Ваш <span class="text-primary">Мем-Токен</span><br> Революция в Децентрализованных Комиксах!
-                </h1>
-                <p class="text-xl sm:text-2xl text-lighttext mb-10 opacity-90" data-lang-key="heroSubtitle">
-                    Добро пожаловать в мир, где мемы оживают, а комиксы рассказывают историю.
+                <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-lighttext leading-tight mb-6" data-lang-key="heroTitle"> Ваш <span class="text-primary">Мем-Токен</span><br> Революция в Децентрализованных Финансах </h1>
+                <p class="text-base sm:text-lg md:text-xl text-lighttext mb-8 max-w-2xl mx-auto" data-lang-key="heroSubtitle"> Присоединяйтесь к движению, которое переопределяет мир криптовалют. </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button class="bg-primary hover:bg-lighttext text-accent font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 text-lg" data-lang-key="buyTokenBtn">Купить Токен</button>
+                    <button class="bg-secondary hover:bg-deepdark text-lighttext font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 text-lg" data-lang-key="learnMoreBtn">Узнать Больше</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tokenDescription" class="py-16 bg-deepdark text-lighttext">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-8" data-lang-key="tokenDescriptionTitle">Что такое ВашМемТокен?</h2>
+                <p class="text-lg mb-6 max-w-3xl mx-auto" data-lang-key="tokenDescriptionParagraph1">
+                    ВашМемТокен — это не просто очередная криптовалюта. Это движение, это культура, это децентрализованное будущее, воплощенное в уникальном мем-токене, который сочетает юмор с серьезными технологиями блокчейна. Мы создаем сообщество, где каждый участник имеет голос и возможность влиять на развитие проекта.
                 </p>
-                <button id="buyTokenBtn" class="bg-primary hover:bg-lighttext text-accent font-extrabold py-4 px-10 rounded-full text-2xl shadow-xl transform transition duration-300 ease-in-out hover:scale-105 border-4 border-primary" data-lang-key="buyTokenBtnHero">
-                    Купить Ваш Токен Сейчас!
+                <p class="text-lg max-w-3xl mx-auto" data-lang-key="tokenDescriptionParagraph2">
+                    Наша цель — показать, что финансы могут быть веселыми и доступными, при этом оставаясь безопасными и инновационными. Присоединяйтесь к нам и станьте частью революции мемов в мире блокчейна!
+                </p>
+            </div>
+        </section>
+
+        <section id="readComicsDrive" class="py-16 bg-darkbg text-lighttext">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-8" data-lang-key="comicsSectionTitle">Погрузитесь в Мир Наших Комиксов!</h2>
+                <p class="text-lg mb-10 max-w-3xl mx-auto" data-lang-key="comicsSectionText">
+                    Откройте для себя захватывающие истории, которые расширяют вселенную ВашМемТокен. Наши комиксы — это не только развлечение, но и глубокое погружение в лор проекта, с неожиданными поворотами, юмором и отсылками, которые порадуют каждого криптоэнтузиаста.
+                </p>
+                <a href="comics/comicschapter-list.html" class="bg-primary hover:bg-lighttext text-accent font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 text-lg inline-block" data-lang-key="readComicsBtn">
+                    Начать Чтение Комиксов
+                </a>
+            </div>
+        </section>
+
+        <section id="buy" class="py-16 bg-deepdark text-lighttext">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-8" data-lang-key="buySectionTitle">Как Купить ВашМемТокен</h2>
+                <p class="text-lg mb-10 max-w-4xl mx-auto" data-lang-key="buySectionText">
+                    Купить ВашМемТокен легко и безопасно. Следуйте этим простым шагам, чтобы стать обладателем нашего уникального актива:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-panelbg p-8 rounded-xl shadow-lg transition duration-300 ease-in-out hover:shadow-primary hover:scale-105">
+                        <div class="text-5xl mb-4 text-primary">💰</div>
+                        <h3 class="text-2xl font-bold text-lighttext mb-4" data-lang-key="buyStep1Title">Шаг 1: Подключите Кошелек</h3>
+                        <p class="text-base" data-lang-key="buyStep1Text">Используйте MetaMask, Trust Wallet или любой другой совместимый кошелек для подключения к нашей платформе.</p>
+                    </div>
+                    <div class="bg-panelbg p-8 rounded-xl shadow-lg transition duration-300 ease-in-out hover:shadow-primary hover:scale-105">
+                        <div class="text-5xl mb-4 text-primary">🔄</div>
+                        <h3 class="text-2xl font-bold text-lighttext mb-4" data-lang-key="buyStep2Title">Шаг 2: Обменяйте Валюту</h3>
+                        <p class="text-base" data-lang-key="buyStep2Text">Обменяйте свои текущие криптовалюты (например, BNB, ETH) на ВашМемТокен через нашу встроенную свап-платформу.</p>
+                    </div>
+                    <div class="bg-panelbg p-8 rounded-xl shadow-lg transition duration-300 ease-in-out hover:shadow-primary hover:scale-105">
+                        <div class="text-5xl mb-4 text-primary">🚀</div>
+                        <h3 class="text-2xl font-bold text-lighttext mb-4" data-lang-key="buyStep3Title">Шаг 3: Станьте Частью Движения</h3>
+                        <p class="text-base" data-lang-key="buyStep3Text">Поздравляем! Теперь вы являетесь частью сообщества ВашМемТокен. Приготовьтесь к взлету!</p>
+                    </div>
+                </div>
+                <button class="bg-primary hover:bg-lighttext text-accent font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105 text-lg mt-10" data-lang-key="buyNowBtn">
+                    Купить Сейчас
                 </button>
             </div>
         </section>
 
-        <!-- Описание Мем-токена -->
-        <section id="about" class="py-20 bg-darkbg text-center">
-            <div class="container mx-auto px-6">
-                <h2 class="text-4xl sm:text-5xl font-bold text-lighttext mb-12 relative pb-4" data-lang-key="aboutTitle">
-                    <span class="text-primary">О</span> Вашем Токене
-                    <span class="absolute bottom-0 left-1/2 w-24 h-1 bg-primary rounded-full transform -translate-x-1/2"></span>
-                </h2>
-                <div class="grid md:grid-cols-2 gap-12 items-center">
-                    <div>
-                        <img src="https://placehold.co/600x400/000000/FFD700?text=ИЗОБРАЖЕНИЕ+МЕМА" alt="Мем Токен" class="rounded-3xl shadow-xl border-4 border-secondary mx-auto">
-                    </div>
-                    <div class="text-lg sm:text-xl leading-relaxed text-lighttext text-left">
-                        <p class="mb-6" data-lang-key="aboutP1">
-                            Наш мем-токен — это не просто криптовалюта, это целая вселенная, где каждый комикс рассказывает уникальную историю нашего сообщества. Мы объединяем любителей мемов и блокчейна, создавая захватывающий контент и возможности для наших держателей.
-                        </p>
-                        <p data-lang-key="aboutP2">
-                            Присоединяйтесь к нам, чтобы стать частью этой увлекательной саги, получать эксклюзивный доступ к новым комиксам, участвовать в голосованиях и многое другое. Вместе мы построим децентрализованную империю мемов!
-                        </p>
-                        <ul class="list-disc list-inside mt-6 text-lighttext">
-                            <li class="mb-2"><strong class="text-primary" data-lang-key="aboutFeature1Title">Сообщество:</strong> <span data-lang-key="aboutFeature1Desc">Активное и растущее сообщество единомышленников.</span></li>
-                            <li class="mb-2"><strong class="text-primary" data-lang-key="aboutFeature2Title">Контент:</strong> <span data-lang-key="aboutFeature2Desc">Регулярные выпуски оригинальных мем-комиксов.</span></li>
-                            <li class="mb-2"><strong class="text-primary" data-lang-key="aboutFeature3Title">Возможности:</strong> <span data-lang-key="aboutFeature3Desc">Эксклюзивный доступ и привилегии для держателей токена.</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- НОВАЯ Секция: Доступ к Комиксам через Google Диск -->
-        <section id="readComicsDrive" class="py-20 bg-gradient-to-br from-darkbg to-deepdark text-center">
-            <div class="container mx-auto px-6">
-                <h2 class="text-4xl sm:text-5xl font-bold text-lighttext mb-12 relative pb-4" data-lang-key="readComicsDriveTitle">
-                    <span class="text-primary">Читать</span> Комиксы
-                    <span class="absolute bottom-0 left-1/2 w-24 h-1 bg-primary rounded-full transform -translate-x-1/2"></span>
-                </h2>
-                <p class="text-lg sm:text-xl text-lighttext mb-10 max-w-3xl mx-auto" data-lang-key="readComicsDriveSubtitle">
-                    Все наши захватывающие истории теперь доступны прямо на Google Диске! Вы можете просматривать их онлайн или скачать для чтения в любое время.
+        <section id="about" class="py-16 bg-darkbg text-lighttext">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-primary mb-8" data-lang-key="aboutSectionTitle">О Нас</h2>
+                <p class="text-lg mb-6 max-w-3xl mx-auto" data-lang-key="aboutSectionParagraph1">
+                    Команда ВашМемТокен состоит из увлеченных энтузиастов блокчейна, дизайнеров и маркетологов, объединенных общей целью — создать самый веселый и инновационный мем-токен на рынке. Мы верим в силу сообщества и прозрачность, и работаем каждый день, чтобы принести вам лучший опыт.
                 </p>
-                <a href="https://drive.google.com/drive/folders/ВАША_ССЫЛКА_НА_ПАПКУ_С_КОМИКСАМИ" target="_blank" class="inline-block bg-primary hover:bg-lighttext text-accent font-extrabold py-4 px-10 rounded-full text-2xl shadow-xl transform transition duration-300 ease-in-out hover:scale-105 border-4 border-primary" data-lang-key="goToDriveBtn">
-                    Перейти на Google Диск
-                </a>
-                <p class="text-sm text-lighttext mt-8 max-w-3xl mx-auto opacity-70" data-lang-key="driveNote">
-                    Для лучшего опыта просмотра рекомендуем использовать Google Диск на настольном компьютере или мобильном приложении.
-                </p>
-            </div>
-        </section>
-
-        <!-- Секция Покупки Токена и Подключения Кошелька -->
-        <section id="buy" class="py-20 bg-darkbg text-center">
-            <div class="container mx-auto px-6">
-                <h2 class="text-4xl sm:text-5xl font-bold text-lighttext mb-12 relative pb-4" data-lang-key="joinUsTitle">
-                    <span class="text-primary">Присоединяйтесь</span> к Нам!
-                    <span class="absolute bottom-0 left-1/2 w-24 h-1 bg-primary rounded-full transform -translate-x-1/2"></span>
-                </h2>
-                <p class="text-lg sm:text-xl text-lighttext mb-10 max-w-3xl mx-auto" data-lang-key="joinUsSubtitle">
-                    Начните свое путешествие в мире децентрализованных комиксов, приобретая наш мем-токен и подключив свой кошелек.
-                </p>
-
-                <div class="flex flex-col md:flex-row justify-center items-center gap-8">
-                    <div class="bg-panelbg p-8 rounded-3xl shadow-xl border-4 border-secondary flex flex-col items-center max-w-sm w-full">
-                        <h3 class="text-2xl sm:text-3xl font-bold text-primary mb-6" data-lang-key="connectWalletSectionTitle">Подключите Ваш Кошелек</h3>
-                        <p class="text-lighttext mb-6" data-lang-key="connectWalletSectionDesc">
-                            Для взаимодействия с децентрализованными приложениями, пожалуйста, подключите ваш Web3 кошелек.
-                        </p>
-                        <button id="connectWalletBtnBottom" class="bg-primary hover:bg-lighttext text-accent font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105" data-lang-key="connectWalletBtn">
-                            Подключить Кошелек
-                        </button>
-                        <p id="walletStatus" class="mt-4 text-sm text-lighttext"></p>
-                        <p id="connectedAddress" class="mt-2 text-sm text-lighttext break-all"></p>
-                    </div>
-
-                    <div class="bg-panelbg p-8 rounded-3xl shadow-xl border-4 border-secondary flex flex-col items-center max-w-sm w-full">
-                        <h3 class="text-2xl sm:text-3xl font-bold text-primary mb-6" data-lang-key="buyTokenSectionTitle">Купите Наш Токен</h3>
-                        <p class="text-lighttext mb-6" data-lang-key="buyTokenSectionDesc">
-                            Самый простой способ стать частью нашего сообщества — приобрести наш мем-токен.
-                        </p>
-                        <button id="buyTokenBtnBottom" class="bg-primary hover:bg-lighttext text-accent font-bold py-3 px-8 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105" data-lang-key="buyTokenBtnHero">
-                            Купить Токен
-                        </button>
-                    </div>
-                </div>
-                <p class="text-sm text-lighttext mt-12 max-w-4xl mx-auto" data-lang-key="warningNote">
-                    <strong class="text-primary">Внимание:</strong> Функциональность WalletConnect и покупки токена в этом примере является демонстрационной. Для полной реализации требуется интеграция со смарт-контрактами и децентрализованными биржами, а также обработка транзакций на блокчейне.
+                <p class="text-lg max-w-3xl mx-auto" data-lang-key="aboutSectionParagraph2">
+                    Наша миссия — не только создать успешный токен, но и построить процветающую, активную и вовлеченную экосистему, где каждый участник чувствует себя ценным и может внести свой вклад.
                 </p>
             </div>
         </section>
     </main>
 
-    <!-- Подвал сайта -->
-    <footer class="bg-darkbg py-8 text-lighttext text-center">
+    <footer class="bg-deepdark py-8 text-lighttext text-center">
         <div class="container mx-auto px-6">
-            <p data-lang-key="footerCopyright">&copy; 2025 Ваш Мем-Токен. Все права защищены.</p>
-            <div class="flex justify-center space-x-6 mt-4">
-                <a href="#" class="text-lighttext hover:text-primary transition duration-300 ease-in-out">Twitter</a>
-                <a href="#" class="text-lighttext hover:text-primary transition duration-300 ease-in-out">Telegram</a>
-                <a href="#" class="text-lighttext hover:text-primary transition duration-300 ease-in-out">Discord</a>
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <div class="mb-4 md:mb-0">
+                    <a href="#" class="text-2xl font-bold text-lighttext flex items-center">
+                        <span class="text-primary text-4xl mr-2">💎</span> ВашМемТокен
+                    </a>
+                    <p class="text-sm mt-2" data-lang-key="footerSlogan">Мемы + Блокчейн = Будущее!</p>
+                </div>
+                <nav class="flex space-x-6">
+                    <a href="#home" class="text-lighttext hover:text-primary transition duration-300 ease-in-out" data-lang-key="navHome">Главная</a>
+                    <a href="comics/comicschapter-list.html" class="text-lighttext hover:text-primary transition duration-300 ease-in-out" data-lang-key="navComics">Комиксы</a>
+                    <a href="#buy" class="text-lighttext hover:text-primary transition duration-300 ease-in-out" data-lang-key="navBuyToken">Купить Токен</a>
+                    <a href="#about" class="text-lighttext hover:text-primary transition duration-300 ease-in-out" data-lang-key="navAbout">О Нас</a>
+                </nav>
+            </div>
+            <div class="border-t border-secondary pt-6 text-sm">
+                <p data-lang-key="footerCopyright">&copy; 2025 ВашМемТокен. Все права защищены.</p>
+                <p class="mt-2">
+                    <a href="#" class="text-lighttext hover:text-primary mr-4" data-lang-key="privacyPolicy">Политика конфиденциальности</a>
+                    <a href="#" class="text-lighttext hover:text-primary" data-lang-key="termsOfService">Условия обслуживания</a>
+                </p>
             </div>
         </div>
     </footer>
 
-    <!-- Подключение WalletConnect (пример) -->
-    <script src="https://unpkg.com/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
     <script>
-        // Объект с переводами
+        // Объект для переводов
         const translations = {
             ru: {
                 pageTitle: 'Ваш Мем-Токен | Главная',
                 tokenName: 'ВашМемТокен',
                 navHome: 'Главная',
-                navComics: 'Комиксы', // Обновлено для навигации
+                navComics: 'Комиксы',
                 navBuyToken: 'Купить Токен',
                 navAbout: 'О Нас',
                 connectWalletBtn: 'Подключить Кошелек',
-                heroTitle: 'Ваш <span class="text-primary">Мем-Токен</span><br> Революция в Децентрализованных Комиксах!',
-                heroSubtitle: 'Добро пожаловать в мир, где мемы оживают, а комиксы рассказывают историю.',
-                buyTokenBtnHero: 'Купить Ваш Токен Сейчас!',
-                aboutTitle: 'О Вашем Токене',
-                aboutP1: 'Наш мем-токен — это не просто криптовалюта, это целая вселенная, где каждый комикс рассказывает уникальную историю нашего сообщества. Мы объединяем любителей мемов и блокчейна, создавая захватывающий контент и возможности для наших держателей.',
-                aboutP2: 'Присоединяйтесь к нам, чтобы стать частью этой увлекательной саги, получать эксклюзивный доступ к новым комиксам, участвовать в голосованиях и многое другое. Вместе мы построим децентрализованную империю мемов!',
-                aboutFeature1Title: 'Сообщество:',
-                aboutFeature1Desc: 'Активное и растущее сообщество единомышленников.',
-                aboutFeature2Title: 'Контент:',
-                aboutFeature2Desc: 'Регулярные выпуски оригинальных мем-комиксов.',
-                aboutFeature3Title: 'Возможности:',
-                aboutFeature3Desc: 'Эксклюзивный доступ и привилегии для держателей токена.',
-                readComicsDriveTitle: 'Читать Комиксы', // Новый перевод
-                readComicsDriveSubtitle: 'Все наши захватывающие истории теперь доступны прямо на Google Диске! Вы можете просматривать их онлайн или скачать для чтения в любое время.', // Новый перевод
-                goToDriveBtn: 'Перейти на Google Диск', // Новый перевод
-                driveNote: 'Для лучшего опыта просмотра рекомендуем использовать Google Диск на настольном компьютере или мобильном приложении.', // Новый перевод
-                joinUsTitle: 'Присоединяйтесь к Нам!',
-                joinUsSubtitle: 'Начните свое путешествие в мире децентрализованных комиксов, приобретая наш мем-токен и подключив свой кошелек.',
-                connectWalletSectionTitle: 'Подключите Ваш Кошелек',
-                connectWalletSectionDesc: 'Для взаимодействия с децентрализованными приложениями, пожалуйста, подключите ваш Web3 кошелек.',
-                walletStatusConnecting: 'Подключение...',
-                walletStatusConnected: 'Кошелек подключен!',
-                walletStatusAddress: 'Адрес: ',
-                walletStatusFailed: 'Не удалось получить адрес.',
-                walletStatusError: 'Ошибка подключения. Проверьте консоль.',
-                buyTokenSectionTitle: 'Купите Наш Токен',
-                buyTokenSectionDesc: 'Самый простой способ стать частью нашего сообщества — приобрести наш мем-токен.',
-                warningNote: 'Внимание: Функциональность WalletConnect и покупки токена в этом примере является демонстрационной. Для полной реализации требуется интеграция со смарт-контрактами и децентрализованными биржами, а также обработка транзакций на блокчейне.',
-                footerCopyright: '&copy; 2025 Ваш Мем-Токен. Все права защищены.',
-                simulatedBuyMessage: 'Вы бы были перенаправлены на PancakeSwap для покупки токена. (Функциональность смоделирована)',
+                heroTitle: 'Ваш <span class="text-primary">Мем-Токен</span><br> Революция в Децентрализованных Финансах',
+                heroSubtitle: 'Присоединяйтесь к движению, которое переопределяет мир криптовалют.',
+                buyTokenBtn: 'Купить Токен',
+                learnMoreBtn: 'Узнать Больше',
+                tokenDescriptionTitle: 'Что такое ВашМемТокен?',
+                tokenDescriptionParagraph1: 'ВашМемТокен — это не просто очередная криптовалюта. Это движение, это культура, это децентрализованное будущее, воплощенное в уникальном мем-токене, который сочетает юмор с серьезными технологиями блокчейна. Мы создаем сообщество, где каждый участник имеет голос и возможность влиять на развитие проекта.',
+                tokenDescriptionParagraph2: 'Наша цель — показать, что финансы могут быть веселыми и доступными, при этом оставаясь безопасными и инновационными. Присоединяйтесь к нам и станьте частью революции мемов в мире блокчейна!',
+                comicsSectionTitle: 'Погрузитесь в Мир Наших Комиксов!',
+                comicsSectionText: 'Откройте для себя захватывающие истории, которые расширяют вселенную ВашМемТокен. Наши комиксы — это не только развлечение, но и глубокое погружение в лор проекта, с неожиданными поворотами, юмором и отсылками, которые порадуют каждого криптоэнтузиаста.',
+                readComicsBtn: 'Начать Чтение Комиксов',
+                buySectionTitle: 'Как Купить ВашМемТокен',
+                buySectionText: 'Купить ВашМемТокен легко и безопасно. Следуйте этим простым шагам, чтобы стать обладателем нашего уникального актива:',
+                buyStep1Title: 'Шаг 1: Подключите Кошелек',
+                buyStep1Text: 'Используйте MetaMask, Trust Wallet или любой другой совместимый кошелек для подключения к нашей платформе.',
+                buyStep2Title: 'Шаг 2: Обменяйте Валюту',
+                buyStep2Text: 'Обменяйте свои текущие криптовалюты (например, BNB, ETH) на ВашМемТокен через нашу встроенную свап-платформу.',
+                buyStep3Title: 'Шаг 3: Станьте Частью Движения',
+                buyStep3Text: 'Поздравляем! Теперь вы являетесь частью сообщества ВашМемТокен. Приготовьтесь к взлету!',
+                buyNowBtn: 'Купить Сейчас',
+                aboutSectionTitle: 'О Нас',
+                aboutSectionParagraph1: 'Команда ВашМемТокен состоит из увлеченных энтузиастов блокчейна, дизайнеров и маркетологов, объединенных общей целью — создать самый веселый и инновационный мем-токен на рынке. Мы верим в силу сообщества и прозрачность, и работаем каждый день, чтобы принести вам лучший опыт.',
+                aboutSectionParagraph2: 'Наша миссия — не только создать успешный токен, но и построить процветающую, активную и вовлеченную экосистему, где каждый участник чувствует себя ценным и может внести свой вклад.',
+                footerSlogan: 'Мемы + Блокчейн = Будущее!',
+                footerCopyright: '© 2025 ВашМемТокен. Все права защищены.',
+                privacyPolicy: 'Политика конфиденциальности',
+                termsOfService: 'Условия обслуживания',
+                simulatedConnectWallet: 'Функциональность подключения кошелька смоделирована.',
+                loadingContent: 'Загрузка контента...',
+                errorLoadingContent: 'Ошибка загрузки контента.'
             },
             en: {
                 pageTitle: 'Your Meme Token | Home',
                 tokenName: 'YourMemeToken',
                 navHome: 'Home',
-                navComics: 'Comics', // Updated for navigation
+                navComics: 'Comics',
                 navBuyToken: 'Buy Token',
-                navAbout: 'About Us',
+                navAbout: 'About',
                 connectWalletBtn: 'Connect Wallet',
-                heroTitle: 'Your <span class="text-primary">Meme Token</span><br> The Revolution in Decentralized Comics!',
-                heroSubtitle: 'Welcome to a world where memes come to life, and comics tell a story.',
-                buyTokenBtnHero: 'Buy Your Token Now!',
-                aboutTitle: 'About Your Token',
-                aboutP1: 'Our meme token is not just a cryptocurrency; it\'s an entire universe where each comic tells a unique story of our community. We unite meme and blockchain enthusiasts, creating exciting content and opportunities for our token holders.',
-                aboutP2: 'Join us to become part of this captivating saga, gain exclusive access to new comics, participate in voting, and much more. Together, we will build a decentralized meme empire!',
-                aboutFeature1Title: 'Community:',
-                aboutFeature1Desc: 'An active and growing community of like-minded individuals.',
-                aboutFeature2Title: 'Content:',
-                aboutFeature2Desc: 'Regular releases of original meme comics.',
-                aboutFeature3Title: 'Opportunities:',
-                aboutFeature3Desc: 'Exclusive access and privileges for token holders.',
-                readComicsDriveTitle: 'Read Comics', // New translation
-                readComicsDriveSubtitle: 'All our exciting stories are now available directly on Google Drive! You can view them online or download them for reading anytime.', // New translation
-                goToDriveBtn: 'Go to Google Drive', // New translation
-                driveNote: 'For the best viewing experience, we recommend using Google Drive on a desktop computer or mobile app.', // New translation
-                joinUsTitle: 'Join Us!',
-                joinUsSubtitle: 'Start your journey in the world of decentralized comics by acquiring our meme token and connecting your wallet.',
-                connectWalletSectionTitle: 'Connect Your Wallet',
-                connectWalletSectionDesc: 'To interact with decentralized applications, please connect your Web3 wallet.',
-                walletStatusConnecting: 'Connecting...',
-                walletStatusConnected: 'Wallet Connected!',
-                walletStatusAddress: 'Address: ',
-                walletStatusFailed: 'Failed to get address.',
-                walletStatusError: 'Connection error. Check console.',
-                buyTokenSectionTitle: 'Buy Our Token',
-                buyTokenSectionDesc: 'The easiest way to become part of our community is to acquire our meme token.',
-                warningNote: 'Attention: WalletConnect functionality and token purchasing in this example is for demonstration purposes only. Full implementation requires integration with smart contracts and decentralized exchanges, as well as blockchain transaction processing.',
-                footerCopyright: '&copy; 2025 Your Meme Token. All rights reserved.',
-                simulatedBuyMessage: 'You would be redirected to PancakeSwap to buy the token. (Functionality simulated)',
+                heroTitle: 'Your <span class="text-primary">Meme Token</span><br> Revolutionizing Decentralized Finance',
+                heroSubtitle: 'Join the movement that is redefining the world of cryptocurrencies.',
+                buyTokenBtn: 'Buy Token',
+                learnMoreBtn: 'Learn More',
+                tokenDescriptionTitle: 'What is YourMemeToken?',
+                tokenDescriptionParagraph1: 'YourMemeToken is not just another cryptocurrency. It\'s a movement, a culture, a decentralized future embodied in a unique meme token that combines humor with serious blockchain technology. We are building a community where every participant has a voice and the opportunity to influence the project\'s development.',
+                tokenDescriptionParagraph2: 'Our goal is to show that finance can be fun and accessible, while remaining secure and innovative. Join us and become part of the meme revolution in the blockchain world!',
+                comicsSectionTitle: 'Dive into the World of Our Comics!',
+                comicsSectionText: 'Discover captivating stories that expand the YourMemeToken universe. Our comics are not just entertainment, but also a deep dive into the project\'s lore, with unexpected twists, humor, and references that will delight every crypto enthusiast.',
+                readComicsBtn: 'Start Reading Comics',
+                buySectionTitle: 'How to Buy YourMemeToken',
+                buySectionText: 'Buying YourMemeToken is easy and secure. Follow these simple steps to become a holder of our unique asset:',
+                buyStep1Title: 'Step 1: Connect Wallet',
+                buyStep1Text: 'Use MetaMask, Trust Wallet, or any other compatible wallet to connect to our platform.',
+                buyStep2Title: 'Step 2: Exchange Currency',
+                buyStep2Text: 'Exchange your current cryptocurrencies (e.g., BNB, ETH) for YourMemeToken through our built-in swap platform.',
+                buyStep3Title: 'Step 3: Become Part of the Movement',
+                buyStep3Text: 'Congratulations! You are now part of the YourMemeToken community. Get ready for takeoff!',
+                buyNowBtn: 'Buy Now',
+                aboutSectionTitle: 'About Us',
+                aboutSectionParagraph1: 'The YourMemeToken team consists of passionate blockchain enthusiasts, designers, and marketers united by a common goal — to create the most fun and innovative meme token on the market. We believe in the power of community and transparency, and we work every day to bring you the best experience.',
+                aboutSectionParagraph2: 'Our mission is not only to create a successful token, but also to build a thriving, active, and engaged ecosystem where every participant feels valued and can contribute.',
+                footerSlogan: 'Memes + Blockchain = Future!',
+                footerCopyright: '© 2025 YourMemeToken. All rights reserved.',
+                privacyPolicy: 'Privacy Policy',
+                termsOfService: 'Terms of Service',
+                simulatedConnectWallet: 'Wallet connection functionality simulated.',
+                loadingContent: 'Loading content...',
+                errorLoadingContent: 'Error loading content.'
             }
         };
 
-        let currentLang = localStorage.getItem('lang') || 'ru'; // Получаем язык из localStorage или по умолчанию 'ru'
+        let currentLang = 'ru'; // Язык по умолчанию
 
+        // Функция для применения переводов
         function applyTranslations() {
             document.querySelectorAll('[data-lang-key]').forEach(element => {
                 const key = element.getAttribute('data-lang-key');
-                if (translations[currentLang] && translations[currentLang][key]) {
-                    // Используем innerHTML, чтобы поддерживать HTML-теги внутри перевода (например, <span>)
-                    element.innerHTML = translations[currentLang][key];
+                if (translations[currentLang][key]) {
+                    if (key === 'heroTitle') { // Для heroTitle используем innerHTML
+                        element.innerHTML = translations[currentLang][key];
+                    } else {
+                        element.textContent = translations[currentLang][key];
+                    }
                 }
             });
-            // Обновляем title страницы
-            document.title = translations[currentLang].pageTitle;
         }
 
-        // Обработчики кнопок переключения языка
+        // Обработчики для кнопок переключения языка
         document.querySelectorAll('.lang-btn').forEach(button => {
             button.addEventListener('click', () => {
                 currentLang = button.getAttribute('data-lang');
-                localStorage.setItem('lang', currentLang); // Сохраняем выбор языка
                 applyTranslations();
+                // Также обновите тексты в мобильном меню, если оно открыто
+                if (mobileMenu.classList.contains('show-menu')) {
+                    // Это уже будет применено функцией applyTranslations, т.к. она работает с data-lang-key
+                }
             });
         });
 
-        // Функция для симуляции WalletConnect (не реальная интеграция)
-        async function connectWallet() {
-            const walletStatus = document.getElementById('walletStatus');
-            const connectedAddress = document.getElementById('connectedAddress');
-            walletStatus.textContent = translations[currentLang].walletStatusConnecting;
-            connectedAddress.textContent = '';
+        // Заглушка для кнопки "Подключить Кошелек"
+        document.getElementById('connectWalletBtn').addEventListener('click', () => {
+            showMessage(translations[currentLang].simulatedConnectWallet, 2000);
+        });
+         document.getElementById('connectWalletBtnMobile').addEventListener('click', () => {
+            showMessage(translations[currentLang].simulatedConnectWallet, 2000);
+        });
 
-            try {
-                // Имитация задержки подключения
-                await new Promise(resolve => setTimeout(resolve, 1500));
 
-                // Имитация успешного подключения и получения адреса
-                const simulatedAddress = '0x' + Math.random().toString(16).substring(2, 42); // Пример случайного адреса
-                walletStatus.textContent = translations[currentLang].walletStatusConnected;
-                connectedAddress.textContent = translations[currentLang].walletStatusAddress + simulatedAddress;
-            } catch (error) {
-                console.error("WalletConnect error:", error);
-                walletStatus.textContent = translations[currentLang].walletStatusError;
-                connectedAddress.textContent = translations[currentLang].walletStatusFailed;
-            }
-        }
-
-        // Обработчики кнопок подключения кошелька
-        document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
-        document.getElementById('connectWalletBtnMobile').addEventListener('click', connectWallet);
-        document.getElementById('connectWalletBtnBottom').addEventListener('click', connectWallet);
-
-        // Обработчики кнопок покупки токена (симуляция)
-        function simulateBuyToken() {
-            showMessage(translations[currentLang].simulatedBuyMessage, 3000);
-        }
-        document.getElementById('buyTokenBtn').addEventListener('click', simulateBuyToken);
-        document.getElementById('buyTokenBtnBottom').addEventListener('click', simulateBuyToken);
-
-        // Функции для мобильного меню
+        // Логика мобильного меню
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
         const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
 
         function openMobileMenu() {
@@ -468,7 +425,7 @@
         // Функция для отображения всплывающих сообщений
         function showMessage(message, duration = 2000) {
             const messageBox = document.createElement('div');
-            messageBox.className = 'message-box show';
+            messageBox.className = 'message-box show fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-deepdark text-lighttext p-4 rounded-lg shadow-lg z-[1001]';
             messageBox.textContent = message;
             document.body.appendChild(messageBox);
 

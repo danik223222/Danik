@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-lang-key="comicPageTitle">Ваш Мем-Токен | Эпизод X</title>
-    <!-- Подключение Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Настройки Tailwind CSS для использования шрифта Inter и кастомизации -->
     <script>
         tailwind.config = {
             theme: {
@@ -76,7 +74,7 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.7); /* Более выраженная тень */
             object-fit: contain; /* Обеспечивает, что изображение полностью видно */
         }
-        
+
         /* Общие стили для кнопок навигации */
         .nav-btn {
             background-color: #1A1A1A; /* Darker gray for general buttons */
@@ -246,9 +244,9 @@
         .chapter-navigation-block .nav-btn:hover {
             background-color: #333333; /* secondary */
         }
-
         /* --- Адаптивность для шапки и нового блока навигации по главам --- */
-        @media (max-width: 767px) { /* Mobile (up to md breakpoint) */
+        @media (max-width: 767px) {
+            /* Mobile (up to md breakpoint) */
             body {
                 padding-top: 112px; /* Отступ для шапки (56px) + блока глав (56px) */
             }
@@ -263,7 +261,6 @@
                 width: 1.25em;
                 height: 1.25em;
             }
-
             .chapter-navigation-block {
                 top: 56px; /* Отступ для новой мобильной шапки */
                 padding: 0.75rem 1rem;
@@ -283,7 +280,6 @@
                 padding-top: 1rem; /* Отступ от блока навигации глав */
             }
         }
-
         /* Адаптивность для боковой панели на мобильных */
         @media (max-width: 640px) { /* sm breakpoint */
             .chapter-list-panel {
@@ -304,386 +300,275 @@
                 font-size: 1.25rem; /* Счетчик страниц */
             }
         }
+        /* Добавлены стили для обводки кнопок */
+        .app-header-nav-btn, .nav-btn, #loginRegisterBtn, #mobileLoginRegisterBtn, .chapter-card button {
+            border: 1px solid #FFD700; /* Тонкая желтая обводка */
+        }
+        .app-header-nav-btn:hover, .nav-btn:hover, #loginRegisterBtn:hover, #mobileLoginRegisterBtn:hover, .chapter-card button:hover {
+            border-color: #FFFFCC; /* Светло-желтая обводка при наведении */
+        }
     </style>
 </head>
 <body class="font-inter">
-    <!-- Шапка страницы комикса -->
     <header class="comic-header">
         <div class="comic-header-container">
-            <!-- Только стрелка "Назад" -->
             <a href="../../index.html#readComicsDrive" class="comic-header-back-arrow">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span class="ml-2" data-lang-key="backToHome">На главную</span>
             </a>
-            
-            <!-- Правая часть: Список глав и Вход/Регистрация -->
-            <div class="flex items-center space-x-4">
-                <button class="bg-primary hover:bg-lighttext text-accent font-bold py-1 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hidden lg:block" data-lang-key="loginRegisterBtn">
-                    Вход/Регистрация
-                </button>
-                <!-- Кнопка "Список глав" теперь перенаправляет на отдельную страницу -->
-                <button id="openChapterListBtn" class="nav-btn header-back-btn">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-            </div>
+            <button id="loginRegisterBtn" class="hidden-on-mobile bg-primary hover:bg-lighttext text-accent font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 ease-in-out text-base" data-lang-key="loginRegisterBtn">
+                Вход / Регистрация
+            </button>
+            <button id="mobileLoginRegisterBtn" class="block md:hidden bg-primary hover:bg-lighttext text-accent font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 ease-in-out text-base" data-lang-key="loginRegisterBtn">
+                Вход / Регистрация
+            </button>
         </div>
     </header>
 
-    <!-- Блок навигации по главам (новый, под шапкой) -->
-    <div class="chapter-navigation-block">
-        <button id="prevChapterBtn" class="nav-btn">
-            &lt;
+    <div class="chapter-navigation-block fixed w-full top-[60px] md:top-[60px] z-20">
+        <button id="prevChapterBtn" class="nav-btn p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed" data-lang-key="prevChapter">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
         </button>
-        <span id="currentChapterTitle" class="text-xl font-bold text-lighttext" data-lang-key="currentChapterDisplay">Загрузка...</span>
-        <button id="nextChapterBtn" class="nav-btn">
-            &gt;
+        <span id="currentChapterTitle" class="text-xl font-bold text-primary mr-2" data-lang-key="chapterTitle">Глава X</span>
+        <button id="nextChapterBtn" class="nav-btn p-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed" data-lang-key="nextChapter">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+        <button id="openChapterListBtn" class="nav-btn p-2 ml-4" data-lang-key="chapterListBtn">
+            Список глав
         </button>
     </div>
 
-    <!-- Основной контент комикса -->
-    <div class="main-comic-content comic-main-wrapper">
-        <!-- Контейнер для страниц комикса -->
+    <main class="comic-main-wrapper flex flex-col items-center justify-center min-h-screen pt-4 pb-20">
         <div id="comicPagesContainer" class="comic-pages-container">
-            <!-- Страницы комикса будут загружены здесь JavaScript-ом -->
-        </div>
-    </div>
+            </div>
+    </main>
 
-    <!-- Нижняя навигация (фиксированная) - скрыта для вертикального режима -->
-    <div class="fixed-bottom-nav" style="display: none;">
-        <button id="prevPageBtn" class="nav-btn">
-            &larr;
+    <nav class="fixed-bottom-nav">
+        <button id="bottomPrevChapterBtn" class="nav-btn px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed" data-lang-key="prevChapter">
+            Назад
         </button>
-        <span id="pageCounter" class="text-xl font-bold text-lighttext flex items-center justify-center">1/3</span>
-        <button id="nextPageBtn" class="nav-btn">
-            &rarr;
+        <span id="pageCounter" class="text-xl font-bold text-primary" data-lang-key="pageCount">Страница X из Y</span>
+        <button id="bottomNextChapterBtn" class="nav-btn px-4 py-2 rounded-full disabled:opacity-50 disabled:cursor-not-allowed" data-lang-key="nextChapter">
+            Вперед
         </button>
-    </div>
-
-
-    <!-- Боковая панель для списка глав - УДАЛЕНА из HTML -->
-    <!-- <div id="chapterListPanel" class="chapter-list-panel"> ... </div> -->
-    <!-- <div id="chapterListOverlay" class="fixed inset-0 bg-overlay z-990 hidden"></div> -->
-
+    </nav>
 
     <script>
-        // Объект с переводами для этой страницы и общими элементами
         const translations = {
             ru: {
-                comicPageTitle: 'Ваш Мем-Токен | Эпизод X', // Обновите на название текущей главы
-                currentChapterDisplay: 'Загрузка...', // Будет обновляться динамически
-                loginRegisterBtn: 'Вход/Регистрация',
-                chapterListTitle: 'Список глав',
-                searchPlaceholder: 'Поиск',
-                showFromStartBtn: 'Показать с начала',
-                pageCounterFormat: '{currentPage}/{totalPages}', 
-                chapterLocked: 'Эта глава заблокирована.',
-                chapterNavigationSimulated: 'Переход к главе: {chapterTitle}',
-                endOfComic: 'Конец главы. Переход к следующей главе.',
-                startOfComic: 'Начало главы. Переход к предыдущей главе.',
-                imageLoadError: 'Ошибка загрузки страницы {pageNumber}. Проверьте путь к изображению.'
+                comicPageTitle: 'Ваш Мем-Токен | Эпизод X',
+                backToHome: 'На главную',
+                loginRegisterBtn: 'Вход / Регистрация',
+                prevChapter: 'Назад',
+                nextChapter: 'Вперед',
+                chapterListBtn: 'Список глав',
+                chapterTitle: 'Глава X', // Обновляется динамически
+                pageCount: 'Страница X из Y', // Обновляется динамически
+                simulatedLoginRegister: 'Функциональность входа/регистрации смоделирована.',
+                errorLoadingImage: 'Не удалось загрузить изображение.'
             },
             en: {
-                comicPageTitle: 'Your Meme Token | Episode X', // Update with current chapter title
-                currentChapterDisplay: 'Loading...', // Will be updated dynamically
-                loginRegisterBtn: 'Login/Register',
-                chapterListTitle: 'Chapter List',
-                searchPlaceholder: 'Search',
-                showFromStartBtn: 'Show from Start',
-                pageCounterFormat: '{currentPage}/{totalPages}',
-                chapterLocked: 'This chapter is locked.',
-                chapterNavigationSimulated: 'Navigating to chapter: {chapterTitle}',
-                endOfComic: 'End of chapter. Navigating to next chapter.',
-                startOfComic: 'Start of chapter. Navigating to previous chapter.',
-                imageLoadError: 'Error loading page {pageNumber}. Check image path.'
+                comicPageTitle: 'Your Meme Token | Episode X',
+                backToHome: 'Back to Home',
+                loginRegisterBtn: 'Login / Register',
+                prevChapter: 'Previous',
+                nextChapter: 'Next',
+                chapterListBtn: 'Chapter List',
+                chapterTitle: 'Chapter X',
+                pageCount: 'Page X of Y',
+                simulatedLoginRegister: 'Login/Registration functionality simulated.',
+                errorLoadingImage: 'Failed to load image.'
             }
         };
 
-        // Текущий язык (получаем из localStorage или по умолчанию 'ru')
-        const currentLang = localStorage.getItem('lang') || 'ru';
+        let currentLang = 'ru'; // Язык по умолчанию
 
-        // --- Функция для применения переводов ---
         function applyTranslations() {
             document.querySelectorAll('[data-lang-key]').forEach(element => {
                 const key = element.getAttribute('data-lang-key');
-                if (translations[currentLang] && translations[currentLang][key]) {
-                    element.innerHTML = translations[currentLang][key];
+                if (translations[currentLang][key]) {
+                    element.textContent = translations[currentLang][key];
                 }
             });
-            if (currentChapter) { // Обновляем title страницы, если глава уже определена
-                document.title = translations[currentLang].comicPageTitle.replace('Эпизод X', currentChapter[`title_${currentLang}`]);
-            } else { // Если глава еще не определена, используем стандартный title
-                document.title = translations[currentLang].comicPageTitle;
+            // Особый случай для заголовка страницы
+            document.title = translations[currentLang].comicPageTitle;
+        }
+
+        // Данные о всех главах (должны быть синхронизированы с comicschapter-list.html)
+        const allComicChapters = [
+            {
+                id: 1,
+                titleKey: 'chapter1Title',
+                path: 'comic-episode-1/episode-1.html',
+                pages: [
+                    '../../assets/comic/episode-1/page-1.jpg',
+                    '../../assets/comic/episode-1/page-2.jpg'
+                ]
+            },
+            {
+                id: 2,
+                titleKey: 'chapter2Title',
+                path: 'comic-episode-2/episode-2.html',
+                pages: [
+                    '../../assets/comic/episode-2/page-1.jpg',
+                    '../../assets/comic/episode-2/page-2.jpg'
+                ]
+            },
+            // Добавьте остальные главы по аналогии
+        ];
+
+        let currentChapterId = 1; // Текущая глава, которую мы просматриваем (извлекается из URL или устанавливается по умолчанию)
+        let currentPageIndex = 0; // Текущая страница в главе
+
+        // Элементы DOM
+        const comicPagesContainer = document.getElementById('comicPagesContainer');
+        const prevChapterBtn = document.getElementById('prevChapterBtn');
+        const nextChapterBtn = document.getElementById('nextChapterBtn');
+        const bottomPrevChapterBtn = document.getElementById('bottomPrevChapterBtn');
+        const bottomNextChapterBtn = document.getElementById('bottomNextChapterBtn');
+        const currentChapterTitleElement = document.getElementById('currentChapterTitle');
+        const pageCounterElement = document.getElementById('pageCounter');
+
+        // Получаем ID текущей главы из URL (если он есть)
+        function getChapterIdFromUrl() {
+            const pathSegments = window.location.pathname.split('/');
+            const episodeSegment = pathSegments.find(segment => segment.startsWith('comic-episode-'));
+            if (episodeSegment) {
+                const id = parseInt(episodeSegment.replace('comic-episode-', ''));
+                if (!isNaN(id)) {
+                    return id;
+                }
+            }
+            return 1; // По умолчанию глава 1
+        }
+
+        currentChapterId = getChapterIdFromUrl();
+
+        function loadChapter(chapterId) {
+            const chapter = allComicChapters.find(ch => ch.id === chapterId);
+            if (chapter) {
+                currentChapterId = chapterId;
+                currentPageIndex = 0; // Сбрасываем страницу при смене главы
+                renderComicPages(chapter);
+                updateChapterNavigationButtons();
+                updatePageCounter();
+                updateChapterTitle(chapter.titleKey);
+            } else {
+                console.error(`Глава с ID ${chapterId} не найдена.`);
+                // Можно перенаправить на страницу списка глав или показать сообщение об ошибке
+                window.location.href = '../comicschapter-list.html'; // Обновленный путь
             }
         }
 
-        // --- Массив с путями ко ВСЕМ страницам комиксов (главам) ---
-        // !!! ВАЖНО: Обновите этот массив в КАЖДОМ файле комикса,
-        // !!! чтобы он содержал все ваши главы с правильными путями
-        // !!! Убедитесь, что 'path' соответствует ОТНОСИТЕЛЬНОМУ ПУТИ ОТ comics/chapter-list.html
-        // !!! Например, если chapter-list.html находится в /comics/, а episode-1.html в /comics/comic-episode-1/,
-        // !!! то путь будет './comic-episode-1/episode-1.html'
-        const allComicChapters = [
-            { id: 1, title_ru: 'Эпизод 1', title_en: 'Episode 1', path: './comic-episode-1/episode-1.html' },
-            { id: 2, title_ru: 'Эпизод 2', title_en: 'Episode 2', path: './comic-episode-2/episode-2.html' },
-            { id: 3, title_ru: 'Эпизод 3', title_en: 'Episode 3', path: './comic-episode-3/episode-3.html' },
-            { id: 4, title_ru: 'Эпизод 4', title_en: 'Episode 4', path: './comic-episode-4/episode-4.html' },
-            { id: 5, title_ru: 'Эпизод 5', title_en: 'Episode 5', path: './comic-episode-5/episode-5.html' },
-            { id: 6, title_ru: 'Эпизод 6', title_en: 'Episode 6', path: './comic-episode-6/episode-6.html' }, // Пример для будущего Эпизода 6
-            { id: 7, title_ru: 'Эпизод 7 (премиум)', title_en: 'Episode 7 (premium)', path: './comic-episode-7/episode-7.html', locked: true }, // Пример заблокированной главы
-        ];
-        
-        // Определяем текущую главу на основе 'id' текущей страницы
-        // !!! ВАЖНО: ОБНОВИТЕ ЭТОТ ID В КАЖДОМ ФАЙЛЕ КОМИКСА
-        const THIS_COMIC_ID = 5; 
-
-        let currentChapter = allComicChapters.find(chapter => chapter.id === THIS_COMIC_ID);
-        let currentChapterIndex = allComicChapters.findIndex(chapter => chapter.id === THIS_COMIC_ID);
-
-        // --- Массив с ОТНОСИТЕЛЬНЫМИ ПУТЯМИ к страницам ТЕКУЩЕГО комикса из вашего репозитория ---
-        // !!! ВАЖНО: ОБНОВИТЕ ЭТОТ МАССИВ для каждой конкретной страницы комикса.
-        // !!! ПУТИ ДОЛЖНЫ БЫТЬ ОТНОСИТЕЛЬНЫМИ К ТЕКУЩЕМУ HTML-ФАЙЛУ (episode-X.html).
-        // !!! Например, если episode-1.html и page1.webp находятся в одной папке, то путь будет './page1.webp'.
-        // !!! УБЕДИТЕСЬ, ЧТО ВСЕ ФАЙЛЫ СТРАНИЦ КОМИКСА ЗАГРУЖЕНЫ В ВАШ РЕПОЗИТОРИЙ GITHUB В СООТВЕТСТВУЮЩИЕ ПАПКИ!
-        const comicPages = [
-            './page1.webp', // Пример: файл page1.webp находится в той же папке, что и episode-X.html
-            './page2.webp',
-            './page3.webp',
-            // Добавьте здесь относительные пути к остальным страницам ВАШЕГО ТЕКУЩЕГО комикса
-        ];
-
-        let currentPageIndex = 0; // Текущая страница (0-индекс)
-        let currentViewMode = 'vertical'; // Всегда вертикальная прокрутка
-
-        const comicPagesContainer = document.getElementById('comicPagesContainer');
-        const prevPageBtn = document.getElementById('prevPageBtn');
-        const nextPageBtn = document.getElementById('nextPageBtn');
-        const pageCounter = document.getElementById('pageCounter');
-
-        // Элементы боковой панели - УДАЛЕНЫ из HTML, но переменные оставлены, если вдруг понадобятся
-        // const chapterListPanel = document.getElementById('chapterListPanel');
-        // const openChapterListBtn = document.getElementById('openChapterListBtn');
-        // const closeChapterListBtn = document.getElementById('closeChapterListBtn');
-        // const chapterListOverlay = document.getElementById('chapterListOverlay');
-        // const chaptersListDiv = document.getElementById('chaptersList');
-        // const chapterSearchInput = document.getElementById('chapterSearchInput');
-        // const showFromStartBtn = document.getElementById('showFromStartBtn');
-
-        const prevChapterBtn = document.getElementById('prevChapterBtn'); // Кнопки переключения глав
-        const nextChapterBtn = document.getElementById('nextChapterBtn'); // Кнопки переключения глав
-        const currentChapterTitleSpan = document.getElementById('currentChapterTitle'); // Элемент для названия текущей главы
-
-        let scrollTimeout; // Для задержки скролла
-        let lastScrollTop = 0; // Для отслеживания направления скролла
-
-        // Функция для рендеринга текущей страницы комикса
-        function renderComicPage() {
+        function renderComicPages(chapter) {
             comicPagesContainer.innerHTML = ''; // Очищаем контейнер
-            if (comicPages.length === 0) {
-                // Если нет страниц, выводим сообщение об ошибке
-                const errorMessage = document.createElement('p');
-                errorMessage.className = 'comic-page-error-message text-center text-xl p-4';
-                errorMessage.textContent = currentLang === 'ru' ? 'Нет страниц комикса для отображения. Проверьте массив comicPages.' : 'No comic pages to display. Check the comicPages array.';
-                comicPagesContainer.appendChild(errorMessage);
-                console.error('Error: comicPages array is empty or not configured correctly.');
-                updateNavigationButtons();
-                updatePageCounter();
-                updateChapterNavigationButtons();
-                return;
-            }
-
-            // В вертикальном режиме отображаем все страницы
-            comicPages.forEach((src, index) => {
+            chapter.pages.forEach((pagePath, index) => {
                 const pageWrapper = document.createElement('div');
                 pageWrapper.className = 'comic-page-wrapper';
                 const img = document.createElement('img');
-                img.src = src;
-                img.alt = `${currentChapter[`title_${currentLang}`]} - Страница ${index + 1}`; // Альтернативный текст с названием главы
-                img.className = 'comic-page-img'; // Применяем стили изображения
-                
-                // Обработка ошибки загрузки изображения
+                img.src = pagePath;
+                img.alt = `${translations[currentLang].chapterTitle} - ${translations[currentLang].pageCount.replace('X', index + 1).replace('Y', chapter.pages.length)}`;
+                img.className = 'comic-page-img';
                 img.onerror = () => {
-                    console.error(`Failed to load image: ${src}`);
                     const errorMessage = document.createElement('p');
                     errorMessage.className = 'comic-page-error-message';
-                    errorMessage.textContent = translations[currentLang].imageLoadError.replace('{pageNumber}', index + 1);
+                    errorMessage.textContent = translations[currentLang].errorLoadingImage;
                     pageWrapper.appendChild(errorMessage);
-                    img.style.display = 'none'; // Скрываем сломанное изображение
                 };
-
                 pageWrapper.appendChild(img);
                 comicPagesContainer.appendChild(pageWrapper);
             });
-            
-            updateNavigationButtons(); // Обновляем кнопки навигации по страницам
-            updatePageCounter(); // Обновляем счетчик страниц
-            updateChapterNavigationButtons(); // Обновляем кнопки навигации по главам
         }
 
-        // Функция для обновления состояния кнопок навигации по страницам (внизу)
-        function updateNavigationButtons() {
-            // В режиме вертикальной прокрутки эти кнопки не нужны
-            prevPageBtn.style.display = 'none';
-            nextPageBtn.style.display = 'none';
-            pageCounter.style.display = 'none';
-        }
-
-        // Функция для обновления счетчика страниц (не используется в вертикальном режиме)
-        function updatePageCounter() {
-            // Не используется для вертикальной прокрутки, но функция оставлена для совместимости
-            pageCounter.textContent = ''; 
-        }
-
-        // Переключение на предыдущую/следующую страницу (не используется для вертикального режима)
-        function prevPage() { /* Logic removed as it's not used in vertical scroll */ }
-        function nextPage() { /* Logic removed as it's not used in vertical scroll */ }
-
-        // Функция для установки режима просмотра (всегда вертикальный)
-        function setViewMode(mode) {
-            currentViewMode = 'vertical'; // Принудительно устанавливаем вертикальный режим
-            localStorage.setItem('comicViewMode', currentViewMode); 
-            comicPagesContainer.classList.remove('horizontal-mode'); // Удаляем горизонтальный класс
-            comicPagesContainer.classList.add('vertical-mode'); // Добавляем вертикальный класс
-            renderComicPage(); // Перерисовать комикс в новом режиме
-        }
-
-        // --- Функции для навигации по главам (верхние кнопки) ---
-        function updateChapterNavigationButtons() {
-            // Обновляем состояние кнопок "Предыдущая/Следующая глава"
-            prevChapterBtn.disabled = currentChapterIndex === 0;
-            nextChapterBtn.disabled = currentChapterIndex === allComicChapters.length - 1;
-
-            // Обновляем текст в центре шапки и title страницы
-            if (currentChapter) {
-                currentChapterTitleSpan.textContent = currentChapter[`title_${currentLang}`];
-                document.title = translations[currentLang].comicPageTitle.replace('Эпизод X', currentChapter[`title_${currentLang}`]);
-            } else {
-                currentChapterTitleSpan.textContent = translations[currentLang].currentChapterDisplay;
+        function updateChapterTitle(titleKey) {
+            const chapter = allComicChapters.find(ch => ch.id === currentChapterId);
+            if (chapter) {
+                currentChapterTitleElement.textContent = translations[currentLang][titleKey];
+                document.title = translations[currentLang].comicPageTitle.replace('X', currentChapterId);
             }
         }
 
+        function updatePageCounter() {
+            const chapter = allComicChapters.find(ch => ch.id === currentChapterId);
+            if (chapter) {
+                pageCounterElement.textContent = translations[currentLang].pageCount
+                    .replace('X', currentPageIndex + 1)
+                    .replace('Y', chapter.pages.length);
+            }
+        }
+
+        function updateChapterNavigationButtons() {
+            const prevChapterExists = allComicChapters.some(ch => ch.id === currentChapterId - 1);
+            const nextChapterExists = allComicChapters.some(ch => ch.id === currentChapterId + 1);
+
+            prevChapterBtn.disabled = !prevChapterExists;
+            bottomPrevChapterBtn.disabled = !prevChapterExists;
+            nextChapterBtn.disabled = !nextChapterExists;
+            bottomNextChapterBtn.disabled = !nextChapterExists;
+        }
+
         function goToPrevChapter() {
-            if (currentChapterIndex > 0) {
-                const prevChapter = allComicChapters[currentChapterIndex - 1];
-                if (!prevChapter.locked) { // Проверяем, не заблокирована ли предыдущая глава
-                    const message = translations[currentLang].chapterNavigationSimulated.replace('{chapterTitle}', prevChapter[`title_${currentLang}`]);
-                    showMessage(message, 1500);
-                    window.location.href = prevChapter.path; // Переход на HTML-файл предыдущей главы
-                } else {
-                    showMessage(translations[currentLang].chapterLocked, 2000);
-                }
-            } else {
-                 showMessage(translations[currentLang].startOfComic, 2000); // Сообщение, если это первая глава
+            const prevChapter = allComicChapters.find(ch => ch.id === currentChapterId - 1);
+            if (prevChapter) {
+                window.location.href = prevChapter.path;
             }
         }
 
         function goToNextChapter() {
-            if (currentChapterIndex < allComicChapters.length - 1) {
-                const nextChapter = allComicChapters[currentChapterIndex + 1];
-                if (!nextChapter.locked) { // Проверяем, не заблокирована ли следующая глава
-                    const message = translations[currentLang].chapterNavigationSimulated.replace('{chapterTitle}', nextChapter[`title_${currentLang}`]);
-                    showMessage(message, 1500);
-                    window.location.href = nextChapter.path; // Переход на HTML-файл следующей главы
-                } else {
-                    showMessage(translations[currentLang].chapterLocked, 2000);
-                }
-            } else {
-                showMessage(translations[currentLang].endOfComic, 2000); // Сообщение, если это последняя глава
+            const nextChapter = allComicChapters.find(ch => ch.id === currentChapterId + 1);
+            if (nextChapter) {
+                window.location.href = nextChapter.path;
             }
         }
 
-        // Рендеринг списка глав в боковой панели - ФУНКЦИЯ УДАЛЕНА, так как панель больше не используется
-        // function renderChapterList(chaptersToRender) { ... }
-
-        // Фильтрация глав по поиску - ОБРАБОТЧИК УДАЛЕН
-        // chapterSearchInput.addEventListener('input', (e) => { ... });
-
-        // Кнопка "Показать с начала" (для списка глав) - ОБРАБОТЧИК УДАЛЕН
-        // showFromStartBtn.addEventListener('click', () => { ... });
-
-        // Открытие/закрытие боковой панели - ФУНКЦИИ УДАЛЕНЫ
-        // function openChapterList() { ... }
-        // function closeChapterList() { ... }
-
-
-        // Функция для отображения всплывающих сообщений (используется для заглушек)
-        function showMessage(message, duration = 2000) {
-            const messageBox = document.createElement('div');
-            messageBox.className = 'message-box show fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-deepdark text-lighttext p-4 rounded-lg shadow-lg z-[1001]';
-            messageBox.textContent = message;
-            document.body.appendChild(messageBox);
-
-            setTimeout(() => {
-                messageBox.classList.remove('show');
-                messageBox.remove();
-            }, duration);
-        }
-
-        // Обработчик события скролла для автоматического переключения страниц
+        // Обработка скролла (для динамического обновления счетчика страниц, если нужно)
         function handleScroll() {
-            if (currentViewMode === 'vertical') {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const scrollHeight = document.documentElement.scrollHeight;
-                const clientHeight = document.documentElement.clientHeight;
-                
-                // Проверяем, доскроллили ли мы до конца страницы (вниз)
-                // Порог: 150px от конца страницы. Это даёт запас.
-                if (scrollTop + clientHeight >= scrollHeight - 150) { 
-                    if (currentChapterIndex < allComicChapters.length - 1) {
-                        // Если это последняя страница текущей главы, переходим к следующей главе
-                        clearTimeout(scrollTimeout);
-                        scrollTimeout = setTimeout(() => {
-                            goToNextChapter();
-                        }, 500); // Задержка перед переходом к следующей главе
-                    }
-                } 
-                // Проверяем, доскроллили ли мы до начала страницы (вверх)
-                // Если это первая глава, и мы в самом верху, ничего не делаем.
-                else if (scrollTop <= 50 && currentChapterIndex > 0) { 
-                    clearTimeout(scrollTimeout);
-                    scrollTimeout = setTimeout(() => {
-                        goToPrevChapter();
-                    }, 500);
-                }
-                lastScrollTop = scrollTop;
-            }
+            // Если у вас много изображений и вы хотите обновлять pageCounter при скролле
+            // Этот код может быть сложнее, если страницы имеют разную высоту.
+            // Для начала, покажем просто первую страницу.
         }
-
 
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', () => {
             applyTranslations(); // Применяем переводы
+            loadChapter(currentChapterId); // Загружаем текущую главу
 
-            // Инициализация режима просмотра (всегда вертикальный)
-            setViewMode('vertical'); 
-
-            // Привязка событий для нижней навигации страниц (они скрыты, но обработчики могут быть)
-            // prevPageBtn.addEventListener('click', prevPage); // Удалено, так как кнопки скрыты
-            // nextPageBtn.addEventListener('click', nextPage); // Удалено, так как кнопки скрыты
+            // Заглушка для кнопки входа/регистрации
+            const loginRegisterBtn = document.querySelector('.hidden-on-mobile');
+            const mobileLoginRegisterBtn = document.querySelector('.block.md\\:hidden'); // Выбираем мобильную кнопку
+            if (loginRegisterBtn) {
+                loginRegisterBtn.addEventListener('click', () => {
+                    showMessage(translations[currentLang].simulatedLoginRegister, 2000);
+                });
+            }
+            if (mobileLoginRegisterBtn) { // Убедимся, что и мобильная кнопка тоже работает
+                mobileLoginRegisterBtn.addEventListener('click', () => {
+                    showMessage(translations[currentLang].simulatedLoginRegister, 2000);
+                });
+            }
 
             // Привязка событий для верхней навигации глав
             prevChapterBtn.addEventListener('click', goToPrevChapter);
             nextChapterBtn.addEventListener('click', goToNextChapter);
 
+            // Привязка событий для нижней навигации страниц/глав
+            bottomPrevChapterBtn.addEventListener('click', goToPrevChapter);
+            bottomNextChapterBtn.addEventListener('click', goToNextChapter);
+
             // Привязка события для кнопки "Список глав" - теперь перенаправляет
             document.getElementById('openChapterListBtn').addEventListener('click', () => {
                 // Путь к новой странице со списком глав ОТНОСИТЕЛЬНО ТЕКУЩЕЙ СТРАНИЦЫ КОМИКСА
-                // Если episode-X.html находится в /comics/comic-episode-X/, а chapter-list.html в /comics/,
-                // то нужно подняться на один уровень вверх (..)
-                window.location.href = '../chapter-list.html'; 
+                // episode-X.html находится в C:\Users\danik\Desktop\1\1\comics\comic-episode-1\
+                // comicschapter-list.html находится в C:\Users\danik\Desktop\1\1\comics\
+                // Нужно подняться на один уровень вверх (..)
+                window.location.href = '../comicschapter-list.html';
             });
-            
+
             // Изначальное обновление кнопок навигации по главам при загрузке
             updateChapterNavigationButtons();
 
             // Добавляем обработчик скролла
             window.addEventListener('scroll', handleScroll);
-
-            // Заглушка для кнопки входа/регистрации
-            const loginRegisterBtn = document.querySelector('.hidden-on-mobile'); 
-            if (loginRegisterBtn) {
-                loginRegisterBtn.addEventListener('click', () => {
-                    showMessage(currentLang === 'ru' ? 'Функциональность входа/регистрации смоделирована.' : 'Login/Registration functionality simulated.', 2000);
-                });
-            }
         });
     </script>
 </body>

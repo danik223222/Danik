@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-lang-key="chapterListPageTitle">Ваш Мем-Токен | Список Эпизодов</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Новая желто-черная палитра
+                        primary: '#FFD700', // Яркий золотисто-желтый
+                        secondary: '#333333', // Темно-серый для контраста
+                        accent: '#000000', // Чистый черный для акцентов
+                        darkbg: '#000000', // Основной фон (чистый черный)
+                        deepdark: '#1A1A1A', // Очень темный серый для некоторых элементов
+                        lighttext: '#FFFFCC', // Светлый желтоватый текст
+                        overlay: 'rgba(0, 0, 0, 0.95)', // Оверлей
+                        headerbg: '#000000', // Чистый черный для шапки
+                        panelbg: '#1A1A1A', // Фон боковых панелей/карточек
+                    }
+                }
+            },
+            // Ensure no CLS by marking all components with the same default sizing
+            plugins: [
+                function ({ addUtilities }) {
+                    const newUtilities = {
+                        '.no-cls': {
+                            'min-height': '1px', /* or appropriate min-height/width */
+                            'min-width': '1px',
+                        },
+                    }
+                    addUtilities(newUtilities)
+                }
+            ]
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Соответствует новому darkbg для всего body */
+            color: #FFFFCC; /* Светлый желтоватый текст по умолчанию */
+            overflow-x: hidden; /* Предотвращаем горизонтальный скролл при открытии меню */
+            padding-top: 90px; /* Отступ сверху для контента, чтобы он не перекрывался шапкой */
+        }
+        /* Стили для скроллбара, чтобы он соответствовал дизайну */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px; /* Для горизонтального скролла */
+        }
+        ::-webkit-scrollbar-track {
+            background: #1A1A1A; /* Темный фон трека */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFD700; /* Цвет ползунка */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFFFCC; /* Цвет ползунка при наведении */
+        }
+        /* Стили для сообщения об ошибке/загрузке */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none; /* Скрыто по умолчанию */
+            text-align: center;
+        }
+        .message-box.show {
+            display: block;
+        }
+
+        /* Более специфичные стили для очень компактной шапки на мобильных устройствах */
+        @media (max-width: 767px) {
+            .header-container {
+                height: 60px; /* Более компактная высота на мобильных устройствах */
+                padding: 8px 16px; /* Уменьшенные внутренние отступы */
+            }
+            .header-logo-text {
+                font-size: 1.5rem; /* Немного уменьшенный размер шрифта для мобильного лого */
+            }
+        }
+        /* Добавлены стили для обводки кнопок */
+        .app-header-nav-btn, .nav-btn, #loginRegisterBtn, #mobileLoginRegisterBtn, .chapter-card button {
+            border: 1px solid #FFD700; /* Тонкая желтая обводка */
+        }
+        .app-header-nav-btn:hover, .nav-btn:hover, #loginRegisterBtn:hover, #mobileLoginRegisterBtn:hover, .chapter-card button:hover {
+            border-color: #FFFFCC; /* Светло-желтая обводка при наведении */
+        }
+    </style>
+</head>
+<body class="font-inter">
+    <header class="fixed top-0 w-full z-50 py-3">
+        <div class="header-container container mx-auto bg-headerbg rounded-full shadow-lg px-6 py-2 flex justify-between items-center max-w-7xl h-20 md:h-14">
+            <a href="../index.html" class="text-3xl font-bold text-lighttext flex items-center rounded-full p-2 transition duration-300 ease-in-out hover:bg-deepdark">
+                <span class="text-primary text-5xl md:text-4xl mr-2">💎</span>
+                <span class="header-logo-text hidden sm:block md:text-3xl" data-lang-key="tokenName">ВашМемТокен</span>
+            </a>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="../index.html" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium" data-lang-key="navHome">Главная</a>
+                <a href="comicschapter-list.html" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium" data-lang-key="navComics">Комиксы</a>
+                <a href="../index.html#buy" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium" data-lang-key="navBuyToken">Купить Токен</a>
+                <a href="../index.html#about" class="text-lighttext hover:text-primary transition duration-300 ease-in-out text-lg font-medium" data-lang-key="navAbout">О Нас</a>
+                <button id="loginRegisterBtn" class="bg-primary hover:bg-lighttext text-accent font-bold py-2 px-6 rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105" data-lang-key="loginRegisterBtn">
+                    Вход / Регистрация
+                </button>
+                <div class="flex space-x-2 ml-4">
+                    <button class="lang-btn text-lighttext hover:text-primary font-bold py-1 px-3 rounded-full transition duration-300 ease-in-out bg-deepdark hover:bg-secondary" data-lang="ru">RU</button>
+                    <button class="lang-btn text-lighttext hover:text-primary font-bold py-1 px-3 rounded-full transition duration-300 ease-in-out bg-deepdark hover:bg-secondary" data-lang="en">EN</button>
+                </div>
+            </div>
+
+            <div class="md:hidden">
+                <button id="mobileLoginRegisterBtn" class="bg-primary hover:bg-lighttext text-accent font-bold py-2 px-4 rounded-full shadow-lg transition duration-300 ease-in-out text-base" data-lang-key="loginRegisterBtn">
+                    Вход / Регистрация
+                </button>
+                 <div class="flex space-x-2 ml-4">
+                    <button class="lang-btn text-lighttext hover:text-primary font-bold py-1 px-3 rounded-full transition duration-300 ease-in-out bg-deepdark hover:bg-secondary" data-lang="ru">RU</button>
+                    <button class="lang-btn text-lighttext hover:text-primary font-bold py-1 px-3 rounded-full transition duration-300 ease-in-out bg-deepdark hover:bg-secondary" data-lang="en">EN</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <h1 class="text-4xl font-extrabold text-primary mb-10 text-center" data-lang-key="chapterListHeader">Список Глав Комиксов</h1>
+
+        <div id="chaptersGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            </div>
+    </main>
+
+    <footer class="bg-deepdark py-8 text-lighttext text-center">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <div class="mb-4 md:mb-0">
+                    <a href="../index.html" class="text-2xl font-bold text-lighttext flex items-center">
+                        <span class="text-primary text-4xl mr-2">💎</span> ВашМемТокен
+                    </a>
+                    <p class="text-sm mt-2" data-lang-key="footerSlogan">Мемы + Блокчейн = Будущее!</p>
+                </div>
+                <nav class="flex space-x-6">
+                    <a href="../index.html" class="text-lighttext hover:text-primary transition duration-300 ease-in-out" data-lang-key="navHome">Главная</a>
+                    <a href="comicschapter-list.html" class="text-lighttext hover:text-primary transition duration-300 ease-in-out" data-lang-key="navComics">Комиксы</a>
+                    <a href="../index.html#buy" class="text-lighttext hover:text-primary transition duration-300 ease-in-out" data-lang-key="navBuyToken">Купить Токен</a>
+                    <a href="../index.html#about" class="text-lighttext hover:text-primary transition duration-300 ease-in-out" data-lang-key="navAbout">О Нас</a>
+                </nav>
+            </div>
+            <div class="border-t border-secondary pt-6 text-sm">
+                <p data-lang-key="footerCopyright">&copy; 2025 ВашМемТокен. Все права защищены.</p>
+                <p class="mt-2">
+                    <a href="#" class="text-lighttext hover:text-primary mr-4" data-lang-key="privacyPolicy">Политика конфиденциальности</a>
+                    <a href="#" class="text-lighttext hover:text-primary" data-lang-key="termsOfService">Условия обслуживания</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const translations = {
+            ru: {
+                chapterListPageTitle: 'Ваш Мем-Токен | Список Эпизодов',
+                tokenName: 'ВашМемТокен',
+                navHome: 'Главная',
+                navComics: 'Комиксы',
+                navBuyToken: 'Купить Токен',
+                navAbout: 'О Нас',
+                loginRegisterBtn: 'Вход / Регистрация',
+                chapterListHeader: 'Список Глав Комиксов',
+                readChapter: 'Читать Главу',
+                chapterLocked: 'Эта глава пока заблокирована. Зарегистрируйтесь, чтобы получить ранний доступ!',
+                footerSlogan: 'Мемы + Блокчейн = Будущее!',
+                footerCopyright: '© 2025 ВашМемТокен. Все права защищены.',
+                privacyPolicy: 'Политика конфиденциальности',
+                termsOfService: 'Условия обслуживания',
+                simulatedLoginRegister: 'Функциональность входа/регистрации смоделирована.',
+                chapter1Title: 'Глава 1: Рождение Мем-Токена',
+                chapter1Description: 'Погрузитесь в начало истории, где обычный программист случайно создает нечто, что изменит мир финансов навсегда.',
+                chapter2Title: 'Глава 2: Великий Запуск',
+                chapter2Description: 'Присоединитесь к волнению первого запуска токена, когда сообщество начинает расти, а вызовы только начинаются.',
+                chapter3Title: 'Глава 3: Эра Децентрализации',
+                chapter3Description: 'Узнайте, как мем-токен борется с традиционными финансовыми системами, вдохновляя миллионы на новую экономическую свободу.',
+                chapter4Title: 'Глава 4: Вторжение Ботов',
+                chapter4Description: 'Внезапная атака ботов угрожает стабильности сети. Сможет ли сообщество объединиться и дать отпор?',
+                chapter5Title: 'Глава 5: Расцвет DAO',
+                chapter5Description: 'По мере роста токена, децентрализованная автономная организация берет управление в свои руки, демонстрируя силу коллективного разума.',
+                chapter6Title: 'Глава 6: Мемы Против Зла',
+                chapter6Description: 'Последняя битва за децентрализованное будущее. Мемы становятся не только валютой, но и оружием в борьбе за свободу.',
+                // Добавьте больше глав по мере необходимости
+            },
+            en: {
+                chapterListPageTitle: 'Your Meme Token | Episode List',
+                tokenName: 'YourMemeToken',
+                navHome: 'Home',
+                navComics: 'Comics',
+                navBuyToken: 'Buy Token',
+                navAbout: 'About',
+                loginRegisterBtn: 'Login / Register',
+                chapterListHeader: 'Comic Chapter List',
+                readChapter: 'Read Chapter',
+                chapterLocked: 'This chapter is currently locked. Register to get early access!',
+                footerSlogan: 'Memes + Blockchain = Future!',
+                footerCopyright: '© 2025 YourMemeToken. All rights reserved.',
+                privacyPolicy: 'Privacy Policy',
+                termsOfService: 'Terms of Service',
+                simulatedLoginRegister: 'Login/Registration functionality simulated.',
+                chapter1Title: 'Chapter 1: The Birth of the Meme Token',
+                chapter1Description: 'Dive into the beginning of the story, where an ordinary programmer accidentally creates something that will change the world of finance forever.',
+                chapter2Title: 'Chapter 2: The Great Launch',
+                chapter2Description: 'Join the excitement of the token\'s initial launch as the community begins to grow and challenges only just begin.',
+                chapter3Title: 'Chapter 3: The Era of Decentralization',
+                chapter3Description: 'Learn how the meme token battles traditional financial systems, inspiring millions towards new economic freedom.',
+                chapter4Title: 'Chapter 4: The Bot Invasion',
+                chapter4Description: 'A sudden bot attack threatens network stability. Can the community unite and fight back?',
+                chapter5Title: 'Chapter 5: The Rise of DAO',
+                chapter5Description: 'As the token grows, a decentralized autonomous organization takes control, demonstrating the power of collective intelligence.',
+                chapter6Title: 'Chapter 6: Memes Against Evil',
+                chapter6Description: 'The final battle for a decentralized future. Memes become not only currency but also a weapon in the fight for freedom.',
+                // Add more chapters as needed
+            }
+        };
+
+        let currentLang = 'ru'; // Язык по умолчанию
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[currentLang][key]) {
+                    element.textContent = translations[currentLang][key];
+                }
+            });
+            document.title = translations[currentLang].chapterListPageTitle;
+        }
+
+        // Данные о главах
+        const comicChapters = [
+            {
+                id: 1,
+                titleKey: 'chapter1Title',
+                descriptionKey: 'chapter1Description',
+                image: '../assets/comic/episode-1/cover.jpg', // Обложка главы
+                path: 'comic-episode-1/episode-1.html', // Путь к файлу главы
+                locked: false
+            },
+            {
+                id: 2,
+                titleKey: 'chapter2Title',
+                descriptionKey: 'chapter2Description',
+                image: '../assets/comic/episode-2/cover.jpg', // Обложка главы
+                path: 'comic-episode-2/episode-2.html',
+                locked: false
+            },
+            {
+                id: 3,
+                titleKey: 'chapter3Title',
+                descriptionKey: 'chapter3Description',
+                image: 'https://placehold.co/300x400/333333/FFFFCC?text=Скоро', // Заглушка для будущей главы
+                path: 'comic-episode-3/episode-3.html',
+                locked: true // Пример заблокированной главы
+            },
+            {
+                id: 4,
+                titleKey: 'chapter4Title',
+                descriptionKey: 'chapter4Description',
+                image: 'https://placehold.co/300x400/333333/FFFFCC?text=Скоро',
+                path: 'comic-episode-4/episode-4.html',
+                locked: true
+            },
+            {
+                id: 5,
+                titleKey: 'chapter5Title',
+                descriptionKey: 'chapter5Description',
+                image: 'https://placehold.co/300x400/333333/FFFFCC?text=Скоро',
+                path: 'comic-episode-5/episode-5.html',
+                locked: true
+            },
+            {
+                id: 6,
+                titleKey: 'chapter6Title',
+                descriptionKey: 'chapter6Description',
+                image: 'https://placehold.co/300x400/333333/FFFFCC?text=Скоро',
+                path: 'comic-episode-6/episode-6.html',
+                locked: true
+            }
+            // Добавьте больше глав по мере необходимости
+        ];
+
+        function renderChapters() {
+            const chaptersGrid = document.getElementById('chaptersGrid');
+            chaptersGrid.innerHTML = ''; // Очищаем сетку перед рендерингом
+
+            comicChapters.forEach(chapter => {
+                const chapterCard = document.createElement('div');
+                chapterCard.className = `chapter-card bg-panelbg p-6 rounded-xl shadow-lg transform transition duration-300 ease-in-out hover:shadow-primary ${chapter.locked ? 'opacity-60 cursor-not-allowed' : 'hover:scale-105'}`;
+
+                let imageSrc = chapter.image;
+                if (!chapter.image) { // Заглушка, если изображение не указано
+                    imageSrc = 'https://placehold.co/300x400/333333/FFFFCC?text=Нет+Обложки';
+                }
+
+                chapterCard.innerHTML = `
+                    <img src="${imageSrc}" alt="${translations[currentLang][chapter.titleKey]}" class="w-full h-auto rounded-md mb-4 object-cover border border-primary">
+                    <h3 class="text-2xl font-bold text-lighttext mb-2" data-lang-key="${chapter.titleKey}">${translations[currentLang][chapter.titleKey]}</h3>
+                    <p class="text-base text-lighttext mb-4" data-lang-key="${chapter.descriptionKey}">${translations[currentLang][chapter.descriptionKey]}</p>
+                    <button class="bg-primary hover:bg-lighttext text-accent font-bold py-2 px-4 rounded-full shadow-lg w-full ${chapter.locked ? 'opacity-50 cursor-not-allowed' : ''}" ${chapter.locked ? 'disabled' : ''} data-chapter-id="${chapter.id}" data-lang-key="readChapter">
+                        ${translations[currentLang].readChapter}
+                    </button>
+                `;
+
+                // Прикрепляем обработчик события к кнопке
+                const readButton = chapterCard.querySelector('button');
+                readButton.addEventListener('click', () => {
+                    if (!chapter.locked) {
+                        window.location.href = chapter.path;
+                    } else {
+                        showMessage(translations[currentLang].chapterLocked, 2000);
+                    }
+                });
+
+                chaptersGrid.appendChild(chapterCard);
+            });
+        }
+
+        // Обработчики для кнопок переключения языка
+        document.querySelectorAll('.lang-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                currentLang = button.getAttribute('data-lang');
+                applyTranslations();
+                renderChapters(); // Перерендеринг глав для обновления текста
+            });
+        });
+
+        // Функция для отображения всплывающих сообщений
+        function showMessage(message, duration = 2000) {
+            const messageBox = document.createElement('div');
+            messageBox.className = 'message-box show fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-deepdark text-lighttext p-4 rounded-lg shadow-lg z-[1001]';
+            messageBox.textContent = message;
+            document.body.appendChild(messageBox);
+
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+                messageBox.remove();
+            }, duration);
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTranslations(); // Применяем переводы
+            renderChapters(); // Рендерим список глав
+
+            // Заглушка для кнопки входа/регистрации (десктоп)
+            const loginRegisterBtnDesktop = document.getElementById('loginRegisterBtn');
+            if (loginRegisterBtnDesktop) {
+                loginRegisterBtnDesktop.addEventListener('click', () => {
+                    showMessage(translations[currentLang].simulatedLoginRegister, 2000);
+                });
+            }
+
+            // Заглушка для кнопки входа/регистрации (мобильная)
+            const loginRegisterBtnMobile = document.getElementById('mobileLoginRegisterBtn');
+            if (loginRegisterBtnMobile) {
+                loginRegisterBtnMobile.addEventListener('click', () => {
+                    showMessage(translations[currentLang].simulatedLoginRegister, 2000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
